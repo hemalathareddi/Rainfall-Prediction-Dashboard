@@ -1,0 +1,4001 @@
+{
+  "documentation": {
+    "objective": "Predict annual rainfall for the year 2016 (following the latest available year 2015) using historical annual rainfall data (1901-2015).",
+    "historical_data_used": {
+      "source": "India Meteorological Department (IMD) Climatological Records",
+      "granularity": "Annual Precipitation (ANNUAL column) across 115 consecutive years (1901\u20132015)",
+      "observations_count": 4116,
+      "subdivisions_count": 36,
+      "latest_historical_year": 2015,
+      "forecast_target_year": 2016
+    },
+    "methodologies_used": [
+      {
+        "model_name": "Ordinary Least Squares (OLS) Linear Trend",
+        "formula": "y_hat = beta_0 + beta_1 * Year",
+        "description": "Captures secular century-long trend slope and long-term climate trajectory."
+      },
+      {
+        "model_name": "Autoregressive Ridge Regression with Lag Features",
+        "formula": "y_hat_t = w_0 + w_1*y_{t-1} + w_2*y_{t-2} + w_3*y_{t-3} + w_4*SMA_3 + w_5*SMA_5",
+        "description": "Models short-memory autoregressive cycles and multi-year inter-annual momentum."
+      },
+      {
+        "model_name": "Holt's Linear Exponential Smoothing",
+        "formula": "Level: L_t = alpha*y_t + (1-alpha)*(L_{t-1} + b_{t-1}); Trend: b_t = beta*(L_t - L_{t-1}) + (1-beta)*b_{t-1}",
+        "description": "Adapts dynamically to recent rainfall velocity without assuming rigid linearity."
+      },
+      {
+        "model_name": "5-Year Rolling Moving Average (SMA)",
+        "formula": "y_hat_t = (1/5) * sum_{i=1}^5 y_{t-i}",
+        "description": "Non-parametric moving baseline filtering high-frequency noise."
+      },
+      {
+        "model_name": "Blended Ensemble Forecaster (Selected)",
+        "formula": "0.35 * Holt + 0.35 * Ridge_Lag + 0.30 * SMA_5",
+        "description": "Optimal bias-variance trade-off balancing trend, autoregression, and recent momentum."
+      }
+    ],
+    "validation_protocol": {
+      "train_period": "1901\u20132005 (105 years)",
+      "test_period": "2006\u20132015 (10 out-of-sample test years)",
+      "metrics": {
+        "Ensemble Forecaster (Recommended)": {
+          "rmse": 114.7,
+          "mae": 101.33,
+          "mape": 7.6,
+          "r2": -0.242
+        },
+        "Holt Linear Exponential Smoothing": {
+          "rmse": 116.02,
+          "mae": 101.96,
+          "mape": 7.57,
+          "r2": -0.27
+        },
+        "Autoregressive Ridge Model": {
+          "rmse": 111.98,
+          "mae": 96.69,
+          "mape": 7.35,
+          "r2": -0.184
+        },
+        "Linear Trend (OLS)": {
+          "rmse": 116.88,
+          "mae": 95.78,
+          "mape": 7.38,
+          "r2": -0.289
+        },
+        "5-Year Rolling Moving Average": {
+          "rmse": 121.84,
+          "mae": 106.03,
+          "mape": 7.91,
+          "r2": -0.401
+        }
+      }
+    }
+  },
+  "national": {
+    "historical_series": [
+      {
+        "year": 1901,
+        "annual": 1284.2085714285715
+      },
+      {
+        "year": 1902,
+        "annual": 1337.2885714285715
+      },
+      {
+        "year": 1903,
+        "annual": 1404.6443328523328
+      },
+      {
+        "year": 1904,
+        "annual": 1236.78
+      },
+      {
+        "year": 1905,
+        "annual": 1186.1685714285716
+      },
+      {
+        "year": 1906,
+        "annual": 1348.002857142857
+      },
+      {
+        "year": 1907,
+        "annual": 1298.3828571428571
+      },
+      {
+        "year": 1908,
+        "annual": 1327.2342857142858
+      },
+      {
+        "year": 1909,
+        "annual": 1343.464705882353
+      },
+      {
+        "year": 1910,
+        "annual": 1436.1457142857143
+      },
+      {
+        "year": 1911,
+        "annual": 1259.9142857142858
+      },
+      {
+        "year": 1912,
+        "annual": 1336.3057142857142
+      },
+      {
+        "year": 1913,
+        "annual": 1285.9514285714286
+      },
+      {
+        "year": 1914,
+        "annual": 1467.2171428571428
+      },
+      {
+        "year": 1915,
+        "annual": 1348.04
+      },
+      {
+        "year": 1916,
+        "annual": 1593.5452793006823
+      },
+      {
+        "year": 1917,
+        "annual": 1680.378615345072
+      },
+      {
+        "year": 1918,
+        "annual": 1263.5714285714287
+      },
+      {
+        "year": 1919,
+        "annual": 1493.927777777778
+      },
+      {
+        "year": 1920,
+        "annual": 1293.0342920353983
+      },
+      {
+        "year": 1921,
+        "annual": 1483.1047297297296
+      },
+      {
+        "year": 1922,
+        "annual": 1498.6305555555555
+      },
+      {
+        "year": 1923,
+        "annual": 1425.1451131687243
+      },
+      {
+        "year": 1924,
+        "annual": 1528.3068016614745
+      },
+      {
+        "year": 1925,
+        "annual": 1439.552777777778
+      },
+      {
+        "year": 1926,
+        "annual": 1477.052777777778
+      },
+      {
+        "year": 1927,
+        "annual": 1484.3669001830115
+      },
+      {
+        "year": 1928,
+        "annual": 1449.3541914682542
+      },
+      {
+        "year": 1929,
+        "annual": 1451.6650205761316
+      },
+      {
+        "year": 1930,
+        "annual": 1414.5111111111112
+      },
+      {
+        "year": 1931,
+        "annual": 1564.563740079365
+      },
+      {
+        "year": 1932,
+        "annual": 1482.836298123149
+      },
+      {
+        "year": 1933,
+        "annual": 1666.736111111111
+      },
+      {
+        "year": 1934,
+        "annual": 1448.0694444444443
+      },
+      {
+        "year": 1935,
+        "annual": 1363.2027777777778
+      },
+      {
+        "year": 1936,
+        "annual": 1565.4728652263375
+      },
+      {
+        "year": 1937,
+        "annual": 1463.1944444444443
+      },
+      {
+        "year": 1938,
+        "annual": 1555.2944444444445
+      },
+      {
+        "year": 1939,
+        "annual": 1331.6222222222223
+      },
+      {
+        "year": 1940,
+        "annual": 1451.1194444444445
+      },
+      {
+        "year": 1941,
+        "annual": 1298.4027777777778
+      },
+      {
+        "year": 1942,
+        "annual": 1531.5225232052649
+      },
+      {
+        "year": 1943,
+        "annual": 1496.6960969387756
+      },
+      {
+        "year": 1944,
+        "annual": 1463.262857142857
+      },
+      {
+        "year": 1945,
+        "annual": 1415.202857142857
+      },
+      {
+        "year": 1946,
+        "annual": 1589.4470515397252
+      },
+      {
+        "year": 1947,
+        "annual": 1489.043951194185
+      },
+      {
+        "year": 1948,
+        "annual": 1549.5885714285714
+      },
+      {
+        "year": 1949,
+        "annual": 1558.848353909465
+      },
+      {
+        "year": 1950,
+        "annual": 1418.5881655092592
+      },
+      {
+        "year": 1951,
+        "annual": 1314.8555555555554
+      },
+      {
+        "year": 1952,
+        "annual": 1324.3944444444444
+      },
+      {
+        "year": 1953,
+        "annual": 1456.3301754385966
+      },
+      {
+        "year": 1954,
+        "annual": 1468.4828571428573
+      },
+      {
+        "year": 1955,
+        "annual": 1563.5685714285714
+      },
+      {
+        "year": 1956,
+        "annual": 1612.82
+      },
+      {
+        "year": 1957,
+        "annual": 1401.9622764376218
+      },
+      {
+        "year": 1958,
+        "annual": 1560.663888888889
+      },
+      {
+        "year": 1959,
+        "annual": 1648.2305555555556
+      },
+      {
+        "year": 1960,
+        "annual": 1413.8972222222224
+      },
+      {
+        "year": 1961,
+        "annual": 1717.0805555555555
+      },
+      {
+        "year": 1962,
+        "annual": 1478.9166374269005
+      },
+      {
+        "year": 1963,
+        "annual": 1476.447222222222
+      },
+      {
+        "year": 1964,
+        "annual": 1494.1916666666666
+      },
+      {
+        "year": 1965,
+        "annual": 1188.7944444444445
+      },
+      {
+        "year": 1966,
+        "annual": 1284.0
+      },
+      {
+        "year": 1967,
+        "annual": 1367.1055555555556
+      },
+      {
+        "year": 1968,
+        "annual": 1304.9722222222222
+      },
+      {
+        "year": 1969,
+        "annual": 1372.6277777777777
+      },
+      {
+        "year": 1970,
+        "annual": 1530.8583333333333
+      },
+      {
+        "year": 1971,
+        "annual": 1477.1555555555556
+      },
+      {
+        "year": 1972,
+        "annual": 1146.5027777777777
+      },
+      {
+        "year": 1973,
+        "annual": 1405.836111111111
+      },
+      {
+        "year": 1974,
+        "annual": 1315.586111111111
+      },
+      {
+        "year": 1975,
+        "annual": 1550.3138888888889
+      },
+      {
+        "year": 1976,
+        "annual": 1345.0500000000002
+      },
+      {
+        "year": 1977,
+        "annual": 1507.525
+      },
+      {
+        "year": 1978,
+        "annual": 1488.9166666666667
+      },
+      {
+        "year": 1979,
+        "annual": 1217.502777777778
+      },
+      {
+        "year": 1980,
+        "annual": 1436.913888888889
+      },
+      {
+        "year": 1981,
+        "annual": 1431.4499999999998
+      },
+      {
+        "year": 1982,
+        "annual": 1290.1333333333334
+      },
+      {
+        "year": 1983,
+        "annual": 1551.2583333333332
+      },
+      {
+        "year": 1984,
+        "annual": 1384.1805555555557
+      },
+      {
+        "year": 1985,
+        "annual": 1349.5277777777778
+      },
+      {
+        "year": 1986,
+        "annual": 1282.8055555555557
+      },
+      {
+        "year": 1987,
+        "annual": 1288.536111111111
+      },
+      {
+        "year": 1988,
+        "annual": 1605.4722222222222
+      },
+      {
+        "year": 1989,
+        "annual": 1347.8055555555557
+      },
+      {
+        "year": 1990,
+        "annual": 1614.3083333333334
+      },
+      {
+        "year": 1991,
+        "annual": 1400.236111111111
+      },
+      {
+        "year": 1992,
+        "annual": 1325.1694444444445
+      },
+      {
+        "year": 1993,
+        "annual": 1430.9361111111111
+      },
+      {
+        "year": 1994,
+        "annual": 1506.8527777777776
+      },
+      {
+        "year": 1995,
+        "annual": 1501.05
+      },
+      {
+        "year": 1996,
+        "annual": 1400.1861111111111
+      },
+      {
+        "year": 1997,
+        "annual": 1416.1944444444443
+      },
+      {
+        "year": 1998,
+        "annual": 1526.775
+      },
+      {
+        "year": 1999,
+        "annual": 1388.0500000000002
+      },
+      {
+        "year": 2000,
+        "annual": 1304.6196637426901
+      },
+      {
+        "year": 2001,
+        "annual": 1302.7194444444444
+      },
+      {
+        "year": 2002,
+        "annual": 1148.8472222222222
+      },
+      {
+        "year": 2003,
+        "annual": 1354.4194444444445
+      },
+      {
+        "year": 2004,
+        "annual": 1298.7083333333333
+      },
+      {
+        "year": 2005,
+        "annual": 1456.4111111111113
+      },
+      {
+        "year": 2006,
+        "annual": 1406.8249999999998
+      },
+      {
+        "year": 2007,
+        "annual": 1514.0638888888889
+      },
+      {
+        "year": 2008,
+        "annual": 1367.3916666666667
+      },
+      {
+        "year": 2009,
+        "annual": 1186.2526803118908
+      },
+      {
+        "year": 2010,
+        "annual": 1468.2166666666667
+      },
+      {
+        "year": 2011,
+        "annual": 1392.9499999999998
+      },
+      {
+        "year": 2012,
+        "annual": 1295.709381091618
+      },
+      {
+        "year": 2013,
+        "annual": 1475.15
+      },
+      {
+        "year": 2014,
+        "annual": 1244.361111111111
+      },
+      {
+        "year": 2015,
+        "annual": 1280.5694444444443
+      }
+    ],
+    "backtest_comparison": [
+      {
+        "year": 2006,
+        "actual": 1406.82,
+        "ensemble": 1345.36,
+        "holt": 1339.73,
+        "ridge_lag": 1379.38,
+        "linear_trend": 1418.95,
+        "sma_5": 1312.22
+      },
+      {
+        "year": 2007,
+        "actual": 1514.06,
+        "ensemble": 1365.75,
+        "holt": 1353.57,
+        "ridge_lag": 1405.98,
+        "linear_trend": 1418.88,
+        "sma_5": 1333.04
+      },
+      {
+        "year": 2008,
+        "actual": 1367.39,
+        "ensemble": 1404.04,
+        "holt": 1393.97,
+        "ridge_lag": 1412.37,
+        "linear_trend": 1418.82,
+        "sma_5": 1406.09
+      },
+      {
+        "year": 2009,
+        "actual": 1186.25,
+        "ensemble": 1405.69,
+        "holt": 1387.06,
+        "ridge_lag": 1421.76,
+        "linear_trend": 1418.75,
+        "sma_5": 1408.68
+      },
+      {
+        "year": 2010,
+        "actual": 1468.22,
+        "ensemble": 1366.96,
+        "holt": 1332.58,
+        "ridge_lag": 1384.85,
+        "linear_trend": 1418.69,
+        "sma_5": 1386.19
+      },
+      {
+        "year": 2011,
+        "actual": 1392.95,
+        "ensemble": 1367.03,
+        "holt": 1364.93,
+        "ridge_lag": 1350.67,
+        "linear_trend": 1418.62,
+        "sma_5": 1388.55
+      },
+      {
+        "year": 2012,
+        "actual": 1295.71,
+        "ensemble": 1383.52,
+        "holt": 1370.93,
+        "ridge_lag": 1394.17,
+        "linear_trend": 1418.55,
+        "sma_5": 1385.77
+      },
+      {
+        "year": 2013,
+        "actual": 1475.15,
+        "ensemble": 1363.25,
+        "holt": 1349.62,
+        "ridge_lag": 1395.01,
+        "linear_trend": 1418.49,
+        "sma_5": 1342.1
+      },
+      {
+        "year": 2014,
+        "actual": 1244.36,
+        "ensemble": 1374.75,
+        "holt": 1381.01,
+        "ridge_lag": 1377.99,
+        "linear_trend": 1418.42,
+        "sma_5": 1363.66
+      },
+      {
+        "year": 2015,
+        "actual": 1280.57,
+        "ensemble": 1370.76,
+        "holt": 1344.12,
+        "ridge_lag": 1393.54,
+        "linear_trend": 1418.36,
+        "sma_5": 1375.28
+      }
+    ],
+    "forecast_2016": {
+      "target_year": 2016,
+      "latest_historical_year": 2015,
+      "lpa": 1417.29,
+      "predictions": {
+        "ensemble": 1339.88,
+        "holt_exponential": 1324.23,
+        "ridge_lag": 1357.36,
+        "linear_trend": 1399.62,
+        "sma_5": 1337.75
+      },
+      "confidence_interval_95": {
+        "lower": 1107.7,
+        "upper": 1572.06,
+        "margin": 232.18
+      },
+      "departure_from_lpa_pct": -5.46,
+      "imd_category": "Near Normal (Within \u00b110%)",
+      "multi_year_projections": [
+        {
+          "year": 2016,
+          "forecast": 1347.05,
+          "linear_trend": 1399.62,
+          "lower_ci": 1105.76,
+          "upper_ci": 1588.34
+        },
+        {
+          "year": 2017,
+          "forecast": 1354.14,
+          "linear_trend": 1399.31,
+          "lower_ci": 1104.08,
+          "upper_ci": 1604.21
+        },
+        {
+          "year": 2018,
+          "forecast": 1361.17,
+          "linear_trend": 1399.01,
+          "lower_ci": 1102.62,
+          "upper_ci": 1619.71
+        },
+        {
+          "year": 2019,
+          "forecast": 1368.12,
+          "linear_trend": 1398.7,
+          "lower_ci": 1101.36,
+          "upper_ci": 1634.87
+        },
+        {
+          "year": 2020,
+          "forecast": 1374.99,
+          "linear_trend": 1398.4,
+          "lower_ci": 1100.27,
+          "upper_ci": 1649.71
+        },
+        {
+          "year": 2021,
+          "forecast": 1381.79,
+          "linear_trend": 1398.1,
+          "lower_ci": 1099.33,
+          "upper_ci": 1664.26
+        },
+        {
+          "year": 2022,
+          "forecast": 1388.52,
+          "linear_trend": 1397.79,
+          "lower_ci": 1098.53,
+          "upper_ci": 1678.52
+        },
+        {
+          "year": 2023,
+          "forecast": 1395.18,
+          "linear_trend": 1397.49,
+          "lower_ci": 1097.84,
+          "upper_ci": 1692.52
+        },
+        {
+          "year": 2024,
+          "forecast": 1397.18,
+          "linear_trend": 1397.18,
+          "lower_ci": 1092.68,
+          "upper_ci": 1701.69
+        },
+        {
+          "year": 2025,
+          "forecast": 1396.88,
+          "linear_trend": 1396.88,
+          "lower_ci": 1085.37,
+          "upper_ci": 1708.38
+        }
+      ]
+    }
+  },
+  "subdivisions": {
+    "ANDAMAN & NICOBAR ISLANDS": {
+      "target_year": 2016,
+      "latest_historical_year": 2015,
+      "lpa": 2930.04,
+      "predictions": {
+        "ensemble": 3142.7,
+        "holt_exponential": 3197.61,
+        "ridge_lag": 2934.04,
+        "linear_trend": 2856.97,
+        "sma_5": 3322.06
+      },
+      "confidence_interval_95": {
+        "lower": 2352.82,
+        "upper": 3932.57,
+        "margin": 789.88
+      },
+      "departure_from_lpa_pct": 7.26,
+      "imd_category": "Near Normal (Within \u00b110%)",
+      "multi_year_projections": [
+        {
+          "year": 2016,
+          "forecast": 3108.41,
+          "linear_trend": 2856.97,
+          "lower_ci": 2287.54,
+          "upper_ci": 3929.27
+        },
+        {
+          "year": 2017,
+          "forecast": 3073.82,
+          "linear_trend": 2855.69,
+          "lower_ci": 2223.09,
+          "upper_ci": 3924.54
+        },
+        {
+          "year": 2018,
+          "forecast": 3038.91,
+          "linear_trend": 2854.41,
+          "lower_ci": 2159.34,
+          "upper_ci": 3918.48
+        },
+        {
+          "year": 2019,
+          "forecast": 3003.71,
+          "linear_trend": 2853.13,
+          "lower_ci": 2096.21,
+          "upper_ci": 3911.21
+        },
+        {
+          "year": 2020,
+          "forecast": 2968.19,
+          "linear_trend": 2851.85,
+          "lower_ci": 2033.6,
+          "upper_ci": 3902.79
+        },
+        {
+          "year": 2021,
+          "forecast": 2932.37,
+          "linear_trend": 2850.57,
+          "lower_ci": 1971.44,
+          "upper_ci": 3893.3
+        },
+        {
+          "year": 2022,
+          "forecast": 2896.24,
+          "linear_trend": 2849.29,
+          "lower_ci": 1909.68,
+          "upper_ci": 3882.8
+        },
+        {
+          "year": 2023,
+          "forecast": 2859.8,
+          "linear_trend": 2848.01,
+          "lower_ci": 1848.27,
+          "upper_ci": 3871.34
+        },
+        {
+          "year": 2024,
+          "forecast": 2846.73,
+          "linear_trend": 2846.73,
+          "lower_ci": 1810.82,
+          "upper_ci": 3882.65
+        },
+        {
+          "year": 2025,
+          "forecast": 2845.45,
+          "linear_trend": 2845.45,
+          "lower_ci": 1785.72,
+          "upper_ci": 3905.19
+        }
+      ]
+    },
+    "ARUNACHAL PRADESH": {
+      "target_year": 2016,
+      "latest_historical_year": 2015,
+      "lpa": 3438.47,
+      "predictions": {
+        "ensemble": 2436.71,
+        "holt_exponential": 2475.53,
+        "ridge_lag": 2284.06,
+        "linear_trend": 2192.49,
+        "sma_5": 2569.52
+      },
+      "confidence_interval_95": {
+        "lower": 920.16,
+        "upper": 3953.26,
+        "margin": 1516.55
+      },
+      "departure_from_lpa_pct": -29.13,
+      "imd_category": "Scanty (Severe Deficit)",
+      "multi_year_projections": [
+        {
+          "year": 2016,
+          "forecast": 2407.4,
+          "linear_trend": 2192.49,
+          "lower_ci": 831.36,
+          "upper_ci": 3983.45
+        },
+        {
+          "year": 2017,
+          "forecast": 2372.14,
+          "linear_trend": 2167.66,
+          "lower_ci": 738.77,
+          "upper_ci": 4005.51
+        },
+        {
+          "year": 2018,
+          "forecast": 2330.91,
+          "linear_trend": 2142.83,
+          "lower_ci": 642.16,
+          "upper_ci": 4019.67
+        },
+        {
+          "year": 2019,
+          "forecast": 2283.73,
+          "linear_trend": 2117.99,
+          "lower_ci": 541.35,
+          "upper_ci": 4026.11
+        },
+        {
+          "year": 2020,
+          "forecast": 2230.58,
+          "linear_trend": 2093.16,
+          "lower_ci": 436.18,
+          "upper_ci": 4024.98
+        },
+        {
+          "year": 2021,
+          "forecast": 2171.48,
+          "linear_trend": 2068.33,
+          "lower_ci": 326.51,
+          "upper_ci": 4016.44
+        },
+        {
+          "year": 2022,
+          "forecast": 2106.41,
+          "linear_trend": 2043.5,
+          "lower_ci": 212.24,
+          "upper_ci": 4000.58
+        },
+        {
+          "year": 2023,
+          "forecast": 2035.38,
+          "linear_trend": 2018.66,
+          "lower_ci": 93.26,
+          "upper_ci": 3977.51
+        },
+        {
+          "year": 2024,
+          "forecast": 1993.83,
+          "linear_trend": 1993.83,
+          "lower_ci": 4.9,
+          "upper_ci": 3982.76
+        },
+        {
+          "year": 2025,
+          "forecast": 1969.0,
+          "linear_trend": 1969.0,
+          "lower_ci": 0.0,
+          "upper_ci": 4003.66
+        }
+      ]
+    },
+    "ASSAM & MEGHALAYA": {
+      "target_year": 2016,
+      "latest_historical_year": 2015,
+      "lpa": 2580.7,
+      "predictions": {
+        "ensemble": 2220.64,
+        "holt_exponential": 2209.4,
+        "ridge_lag": 2275.88,
+        "linear_trend": 2432.73,
+        "sma_5": 2169.32
+      },
+      "confidence_interval_95": {
+        "lower": 1633.4,
+        "upper": 2807.89,
+        "margin": 587.25
+      },
+      "departure_from_lpa_pct": -13.95,
+      "imd_category": "Deficient (Moderate Deficit)",
+      "multi_year_projections": [
+        {
+          "year": 2016,
+          "forecast": 2246.09,
+          "linear_trend": 2432.73,
+          "lower_ci": 1635.81,
+          "upper_ci": 2856.38
+        },
+        {
+          "year": 2017,
+          "forecast": 2270.93,
+          "linear_trend": 2430.18,
+          "lower_ci": 1638.45,
+          "upper_ci": 2903.42
+        },
+        {
+          "year": 2018,
+          "forecast": 2295.16,
+          "linear_trend": 2427.63,
+          "lower_ci": 1641.23,
+          "upper_ci": 2949.09
+        },
+        {
+          "year": 2019,
+          "forecast": 2318.77,
+          "linear_trend": 2425.08,
+          "lower_ci": 1644.08,
+          "upper_ci": 2993.47
+        },
+        {
+          "year": 2020,
+          "forecast": 2341.77,
+          "linear_trend": 2422.53,
+          "lower_ci": 1646.93,
+          "upper_ci": 3036.62
+        },
+        {
+          "year": 2021,
+          "forecast": 2364.16,
+          "linear_trend": 2419.98,
+          "lower_ci": 1649.74,
+          "upper_ci": 3078.58
+        },
+        {
+          "year": 2022,
+          "forecast": 2385.94,
+          "linear_trend": 2417.43,
+          "lower_ci": 1652.47,
+          "upper_ci": 3119.41
+        },
+        {
+          "year": 2023,
+          "forecast": 2407.11,
+          "linear_trend": 2414.87,
+          "lower_ci": 1655.06,
+          "upper_ci": 3159.15
+        },
+        {
+          "year": 2024,
+          "forecast": 2412.32,
+          "linear_trend": 2412.32,
+          "lower_ci": 1642.15,
+          "upper_ci": 3182.49
+        },
+        {
+          "year": 2025,
+          "forecast": 2409.77,
+          "linear_trend": 2409.77,
+          "lower_ci": 1621.9,
+          "upper_ci": 3197.65
+        }
+      ]
+    },
+    "BIHAR": {
+      "target_year": 2016,
+      "latest_historical_year": 2015,
+      "lpa": 1197.64,
+      "predictions": {
+        "ensemble": 1029.38,
+        "holt_exponential": 964.14,
+        "ridge_lag": 1096.98,
+        "linear_trend": 1124.34,
+        "sma_5": 1026.64
+      },
+      "confidence_interval_95": {
+        "lower": 655.29,
+        "upper": 1403.48,
+        "margin": 374.09
+      },
+      "departure_from_lpa_pct": -14.05,
+      "imd_category": "Deficient (Moderate Deficit)",
+      "multi_year_projections": [
+        {
+          "year": 2016,
+          "forecast": 1040.78,
+          "linear_trend": 1124.34,
+          "lower_ci": 652.01,
+          "upper_ci": 1429.55
+        },
+        {
+          "year": 2017,
+          "forecast": 1051.87,
+          "linear_trend": 1123.08,
+          "lower_ci": 648.96,
+          "upper_ci": 1454.78
+        },
+        {
+          "year": 2018,
+          "forecast": 1062.66,
+          "linear_trend": 1121.82,
+          "lower_ci": 646.09,
+          "upper_ci": 1479.23
+        },
+        {
+          "year": 2019,
+          "forecast": 1073.15,
+          "linear_trend": 1120.55,
+          "lower_ci": 643.35,
+          "upper_ci": 1502.95
+        },
+        {
+          "year": 2020,
+          "forecast": 1083.33,
+          "linear_trend": 1119.29,
+          "lower_ci": 640.69,
+          "upper_ci": 1525.96
+        },
+        {
+          "year": 2021,
+          "forecast": 1093.21,
+          "linear_trend": 1118.03,
+          "lower_ci": 638.1,
+          "upper_ci": 1548.31
+        },
+        {
+          "year": 2022,
+          "forecast": 1102.78,
+          "linear_trend": 1116.76,
+          "lower_ci": 635.54,
+          "upper_ci": 1570.02
+        },
+        {
+          "year": 2023,
+          "forecast": 1112.05,
+          "linear_trend": 1115.5,
+          "lower_ci": 632.98,
+          "upper_ci": 1591.13
+        },
+        {
+          "year": 2024,
+          "forecast": 1114.24,
+          "linear_trend": 1114.24,
+          "lower_ci": 623.62,
+          "upper_ci": 1604.85
+        },
+        {
+          "year": 2025,
+          "forecast": 1112.97,
+          "linear_trend": 1112.97,
+          "lower_ci": 611.07,
+          "upper_ci": 1614.87
+        }
+      ]
+    },
+    "CHHATTISGARH": {
+      "target_year": 2016,
+      "latest_historical_year": 2015,
+      "lpa": 1371.73,
+      "predictions": {
+        "ensemble": 1272.65,
+        "holt_exponential": 1248.45,
+        "ridge_lag": 1274.04,
+        "linear_trend": 1267.42,
+        "sma_5": 1299.26
+      },
+      "confidence_interval_95": {
+        "lower": 875.06,
+        "upper": 1670.24,
+        "margin": 397.59
+      },
+      "departure_from_lpa_pct": -7.22,
+      "imd_category": "Near Normal (Within \u00b110%)",
+      "multi_year_projections": [
+        {
+          "year": 2016,
+          "forecast": 1272.02,
+          "linear_trend": 1267.42,
+          "lower_ci": 858.84,
+          "upper_ci": 1685.21
+        },
+        {
+          "year": 2017,
+          "forecast": 1270.96,
+          "linear_trend": 1265.62,
+          "lower_ci": 842.75,
+          "upper_ci": 1699.18
+        },
+        {
+          "year": 2018,
+          "forecast": 1269.47,
+          "linear_trend": 1263.82,
+          "lower_ci": 826.74,
+          "upper_ci": 1712.21
+        },
+        {
+          "year": 2019,
+          "forecast": 1267.55,
+          "linear_trend": 1262.02,
+          "lower_ci": 810.76,
+          "upper_ci": 1724.34
+        },
+        {
+          "year": 2020,
+          "forecast": 1265.2,
+          "linear_trend": 1260.23,
+          "lower_ci": 794.76,
+          "upper_ci": 1735.63
+        },
+        {
+          "year": 2021,
+          "forecast": 1262.41,
+          "linear_trend": 1258.43,
+          "lower_ci": 778.72,
+          "upper_ci": 1746.1
+        },
+        {
+          "year": 2022,
+          "forecast": 1259.19,
+          "linear_trend": 1256.63,
+          "lower_ci": 762.6,
+          "upper_ci": 1755.78
+        },
+        {
+          "year": 2023,
+          "forecast": 1255.54,
+          "linear_trend": 1254.83,
+          "lower_ci": 746.38,
+          "upper_ci": 1764.7
+        },
+        {
+          "year": 2024,
+          "forecast": 1253.03,
+          "linear_trend": 1253.03,
+          "lower_ci": 731.6,
+          "upper_ci": 1774.46
+        },
+        {
+          "year": 2025,
+          "forecast": 1251.23,
+          "linear_trend": 1251.23,
+          "lower_ci": 717.81,
+          "upper_ci": 1784.65
+        }
+      ]
+    },
+    "COASTAL ANDHRA PRADESH": {
+      "target_year": 2016,
+      "latest_historical_year": 2015,
+      "lpa": 1052.9,
+      "predictions": {
+        "ensemble": 1055.95,
+        "holt_exponential": 1071.29,
+        "ridge_lag": 1056.58,
+        "linear_trend": 1086.7,
+        "sma_5": 1037.32
+      },
+      "confidence_interval_95": {
+        "lower": 683.08,
+        "upper": 1428.82,
+        "margin": 372.87
+      },
+      "departure_from_lpa_pct": 0.29,
+      "imd_category": "Near Normal (Within \u00b110%)",
+      "multi_year_projections": [
+        {
+          "year": 2016,
+          "forecast": 1059.64,
+          "linear_trend": 1086.7,
+          "lower_ci": 672.15,
+          "upper_ci": 1447.14
+        },
+        {
+          "year": 2017,
+          "forecast": 1063.47,
+          "linear_trend": 1087.29,
+          "lower_ci": 661.88,
+          "upper_ci": 1465.06
+        },
+        {
+          "year": 2018,
+          "forecast": 1067.44,
+          "linear_trend": 1087.87,
+          "lower_ci": 652.24,
+          "upper_ci": 1482.65
+        },
+        {
+          "year": 2019,
+          "forecast": 1071.55,
+          "linear_trend": 1088.45,
+          "lower_ci": 643.16,
+          "upper_ci": 1499.94
+        },
+        {
+          "year": 2020,
+          "forecast": 1075.8,
+          "linear_trend": 1089.04,
+          "lower_ci": 634.62,
+          "upper_ci": 1516.98
+        },
+        {
+          "year": 2021,
+          "forecast": 1080.19,
+          "linear_trend": 1089.62,
+          "lower_ci": 626.58,
+          "upper_ci": 1533.8
+        },
+        {
+          "year": 2022,
+          "forecast": 1084.72,
+          "linear_trend": 1090.2,
+          "lower_ci": 619.01,
+          "upper_ci": 1550.43
+        },
+        {
+          "year": 2023,
+          "forecast": 1089.39,
+          "linear_trend": 1090.78,
+          "lower_ci": 611.89,
+          "upper_ci": 1566.89
+        },
+        {
+          "year": 2024,
+          "forecast": 1091.37,
+          "linear_trend": 1091.37,
+          "lower_ci": 602.36,
+          "upper_ci": 1580.38
+        },
+        {
+          "year": 2025,
+          "forecast": 1091.95,
+          "linear_trend": 1091.95,
+          "lower_ci": 591.7,
+          "upper_ci": 1592.2
+        }
+      ]
+    },
+    "COASTAL KARNATAKA": {
+      "target_year": 2016,
+      "latest_historical_year": 2015,
+      "lpa": 3405.92,
+      "predictions": {
+        "ensemble": 3595.14,
+        "holt_exponential": 3579.91,
+        "ridge_lag": 3597.88,
+        "linear_trend": 3628.87,
+        "sma_5": 3609.73
+      },
+      "confidence_interval_95": {
+        "lower": 2681.92,
+        "upper": 4508.37,
+        "margin": 913.23
+      },
+      "departure_from_lpa_pct": 5.56,
+      "imd_category": "Near Normal (Within \u00b110%)",
+      "multi_year_projections": [
+        {
+          "year": 2016,
+          "forecast": 3599.19,
+          "linear_trend": 3628.87,
+          "lower_ci": 2650.14,
+          "upper_ci": 4548.24
+        },
+        {
+          "year": 2017,
+          "forecast": 3604.16,
+          "linear_trend": 3632.72,
+          "lower_ci": 2620.59,
+          "upper_ci": 4587.74
+        },
+        {
+          "year": 2018,
+          "forecast": 3610.05,
+          "linear_trend": 3636.56,
+          "lower_ci": 2593.13,
+          "upper_ci": 4626.98
+        },
+        {
+          "year": 2019,
+          "forecast": 3616.87,
+          "linear_trend": 3640.4,
+          "lower_ci": 2567.65,
+          "upper_ci": 4666.09
+        },
+        {
+          "year": 2020,
+          "forecast": 3624.61,
+          "linear_trend": 3644.25,
+          "lower_ci": 2544.06,
+          "upper_ci": 4705.15
+        },
+        {
+          "year": 2021,
+          "forecast": 3633.27,
+          "linear_trend": 3648.09,
+          "lower_ci": 2522.28,
+          "upper_ci": 4744.25
+        },
+        {
+          "year": 2022,
+          "forecast": 3642.85,
+          "linear_trend": 3651.94,
+          "lower_ci": 2502.23,
+          "upper_ci": 4783.47
+        },
+        {
+          "year": 2023,
+          "forecast": 3653.35,
+          "linear_trend": 3655.78,
+          "lower_ci": 2483.85,
+          "upper_ci": 4822.86
+        },
+        {
+          "year": 2024,
+          "forecast": 3659.62,
+          "linear_trend": 3659.62,
+          "lower_ci": 2461.94,
+          "upper_ci": 4857.31
+        },
+        {
+          "year": 2025,
+          "forecast": 3663.47,
+          "linear_trend": 3663.47,
+          "lower_ci": 2438.25,
+          "upper_ci": 4888.69
+        }
+      ]
+    },
+    "EAST MADHYA PRADESH": {
+      "target_year": 2016,
+      "latest_historical_year": 2015,
+      "lpa": 1205.0,
+      "predictions": {
+        "ensemble": 1086.28,
+        "holt_exponential": 1055.62,
+        "ridge_lag": 1068.4,
+        "linear_trend": 1103.31,
+        "sma_5": 1142.9
+      },
+      "confidence_interval_95": {
+        "lower": 669.77,
+        "upper": 1502.79,
+        "margin": 416.51
+      },
+      "departure_from_lpa_pct": -9.85,
+      "imd_category": "Near Normal (Within \u00b110%)",
+      "multi_year_projections": [
+        {
+          "year": 2016,
+          "forecast": 1088.32,
+          "linear_trend": 1103.31,
+          "lower_ci": 655.47,
+          "upper_ci": 1521.17
+        },
+        {
+          "year": 2017,
+          "forecast": 1089.94,
+          "linear_trend": 1101.56,
+          "lower_ci": 641.35,
+          "upper_ci": 1538.54
+        },
+        {
+          "year": 2018,
+          "forecast": 1091.15,
+          "linear_trend": 1099.81,
+          "lower_ci": 627.34,
+          "upper_ci": 1554.95
+        },
+        {
+          "year": 2019,
+          "forecast": 1091.93,
+          "linear_trend": 1098.05,
+          "lower_ci": 613.4,
+          "upper_ci": 1570.46
+        },
+        {
+          "year": 2020,
+          "forecast": 1092.29,
+          "linear_trend": 1096.3,
+          "lower_ci": 599.47,
+          "upper_ci": 1585.11
+        },
+        {
+          "year": 2021,
+          "forecast": 1092.23,
+          "linear_trend": 1094.55,
+          "lower_ci": 585.52,
+          "upper_ci": 1598.94
+        },
+        {
+          "year": 2022,
+          "forecast": 1091.75,
+          "linear_trend": 1092.79,
+          "lower_ci": 571.53,
+          "upper_ci": 1611.97
+        },
+        {
+          "year": 2023,
+          "forecast": 1090.85,
+          "linear_trend": 1091.04,
+          "lower_ci": 557.46,
+          "upper_ci": 1624.24
+        },
+        {
+          "year": 2024,
+          "forecast": 1089.29,
+          "linear_trend": 1089.29,
+          "lower_ci": 543.04,
+          "upper_ci": 1635.53
+        },
+        {
+          "year": 2025,
+          "forecast": 1087.53,
+          "linear_trend": 1087.53,
+          "lower_ci": 528.73,
+          "upper_ci": 1646.34
+        }
+      ]
+    },
+    "EAST RAJASTHAN": {
+      "target_year": 2016,
+      "latest_historical_year": 2015,
+      "lpa": 655.21,
+      "predictions": {
+        "ensemble": 678.01,
+        "holt_exponential": 703.48,
+        "ridge_lag": 605.29,
+        "linear_trend": 639.95,
+        "sma_5": 733.12
+      },
+      "confidence_interval_95": {
+        "lower": 350.8,
+        "upper": 1005.22,
+        "margin": 327.21
+      },
+      "departure_from_lpa_pct": 3.48,
+      "imd_category": "Near Normal (Within \u00b110%)",
+      "multi_year_projections": [
+        {
+          "year": 2016,
+          "forecast": 673.44,
+          "linear_trend": 639.95,
+          "lower_ci": 333.39,
+          "upper_ci": 1013.49
+        },
+        {
+          "year": 2017,
+          "forecast": 668.81,
+          "linear_trend": 639.69,
+          "lower_ci": 316.39,
+          "upper_ci": 1021.23
+        },
+        {
+          "year": 2018,
+          "forecast": 664.12,
+          "linear_trend": 639.43,
+          "lower_ci": 299.75,
+          "upper_ci": 1028.48
+        },
+        {
+          "year": 2019,
+          "forecast": 659.36,
+          "linear_trend": 639.16,
+          "lower_ci": 283.43,
+          "upper_ci": 1035.3
+        },
+        {
+          "year": 2020,
+          "forecast": 654.54,
+          "linear_trend": 638.9,
+          "lower_ci": 267.38,
+          "upper_ci": 1041.7
+        },
+        {
+          "year": 2021,
+          "forecast": 649.66,
+          "linear_trend": 638.64,
+          "lower_ci": 251.59,
+          "upper_ci": 1047.73
+        },
+        {
+          "year": 2022,
+          "forecast": 644.72,
+          "linear_trend": 638.38,
+          "lower_ci": 236.03,
+          "upper_ci": 1053.4
+        },
+        {
+          "year": 2023,
+          "forecast": 639.71,
+          "linear_trend": 638.11,
+          "lower_ci": 220.67,
+          "upper_ci": 1058.74
+        },
+        {
+          "year": 2024,
+          "forecast": 637.85,
+          "linear_trend": 637.85,
+          "lower_ci": 208.72,
+          "upper_ci": 1066.98
+        },
+        {
+          "year": 2025,
+          "forecast": 637.59,
+          "linear_trend": 637.59,
+          "lower_ci": 198.59,
+          "upper_ci": 1076.59
+        }
+      ]
+    },
+    "EAST UTTAR PRADESH": {
+      "target_year": 2016,
+      "latest_historical_year": 2015,
+      "lpa": 979.21,
+      "predictions": {
+        "ensemble": 728.0,
+        "holt_exponential": 697.48,
+        "ridge_lag": 743.16,
+        "linear_trend": 868.04,
+        "sma_5": 745.92
+      },
+      "confidence_interval_95": {
+        "lower": 347.37,
+        "upper": 1108.63,
+        "margin": 380.63
+      },
+      "departure_from_lpa_pct": -25.65,
+      "imd_category": "Scanty (Severe Deficit)",
+      "multi_year_projections": [
+        {
+          "year": 2016,
+          "forecast": 744.8,
+          "linear_trend": 868.04,
+          "lower_ci": 349.24,
+          "upper_ci": 1140.37
+        },
+        {
+          "year": 2017,
+          "forecast": 761.15,
+          "linear_trend": 866.12,
+          "lower_ci": 351.2,
+          "upper_ci": 1171.1
+        },
+        {
+          "year": 2018,
+          "forecast": 777.03,
+          "linear_trend": 864.21,
+          "lower_ci": 353.18,
+          "upper_ci": 1200.89
+        },
+        {
+          "year": 2019,
+          "forecast": 792.46,
+          "linear_trend": 862.29,
+          "lower_ci": 355.15,
+          "upper_ci": 1229.77
+        },
+        {
+          "year": 2020,
+          "forecast": 807.42,
+          "linear_trend": 860.37,
+          "lower_ci": 357.05,
+          "upper_ci": 1257.79
+        },
+        {
+          "year": 2021,
+          "forecast": 821.93,
+          "linear_trend": 858.46,
+          "lower_ci": 358.87,
+          "upper_ci": 1284.99
+        },
+        {
+          "year": 2022,
+          "forecast": 835.97,
+          "linear_trend": 856.54,
+          "lower_ci": 360.56,
+          "upper_ci": 1311.38
+        },
+        {
+          "year": 2023,
+          "forecast": 849.56,
+          "linear_trend": 854.62,
+          "lower_ci": 362.11,
+          "upper_ci": 1337.0
+        },
+        {
+          "year": 2024,
+          "forecast": 852.71,
+          "linear_trend": 852.71,
+          "lower_ci": 353.51,
+          "upper_ci": 1351.9
+        },
+        {
+          "year": 2025,
+          "forecast": 850.79,
+          "linear_trend": 850.79,
+          "lower_ci": 340.12,
+          "upper_ci": 1361.46
+        }
+      ]
+    },
+    "GANGETIC WEST BENGAL": {
+      "target_year": 2016,
+      "latest_historical_year": 2015,
+      "lpa": 1490.49,
+      "predictions": {
+        "ensemble": 1523.32,
+        "holt_exponential": 1442.23,
+        "ridge_lag": 1622.69,
+        "linear_trend": 1583.15,
+        "sma_5": 1501.98
+      },
+      "confidence_interval_95": {
+        "lower": 1083.88,
+        "upper": 1962.75,
+        "margin": 439.43
+      },
+      "departure_from_lpa_pct": 2.2,
+      "imd_category": "Near Normal (Within \u00b110%)",
+      "multi_year_projections": [
+        {
+          "year": 2016,
+          "forecast": 1530.5,
+          "linear_trend": 1583.15,
+          "lower_ci": 1073.83,
+          "upper_ci": 1987.17
+        },
+        {
+          "year": 2017,
+          "forecast": 1538.06,
+          "linear_trend": 1584.75,
+          "lower_ci": 1064.78,
+          "upper_ci": 2011.34
+        },
+        {
+          "year": 2018,
+          "forecast": 1546.01,
+          "linear_trend": 1586.35,
+          "lower_ci": 1056.68,
+          "upper_ci": 2035.34
+        },
+        {
+          "year": 2019,
+          "forecast": 1554.34,
+          "linear_trend": 1587.95,
+          "lower_ci": 1049.47,
+          "upper_ci": 2059.21
+        },
+        {
+          "year": 2020,
+          "forecast": 1563.05,
+          "linear_trend": 1589.55,
+          "lower_ci": 1043.11,
+          "upper_ci": 2083.0
+        },
+        {
+          "year": 2021,
+          "forecast": 1572.15,
+          "linear_trend": 1591.14,
+          "lower_ci": 1037.56,
+          "upper_ci": 2106.74
+        },
+        {
+          "year": 2022,
+          "forecast": 1581.63,
+          "linear_trend": 1592.74,
+          "lower_ci": 1032.78,
+          "upper_ci": 2130.48
+        },
+        {
+          "year": 2023,
+          "forecast": 1591.5,
+          "linear_trend": 1594.34,
+          "lower_ci": 1028.75,
+          "upper_ci": 2154.25
+        },
+        {
+          "year": 2024,
+          "forecast": 1595.94,
+          "linear_trend": 1595.94,
+          "lower_ci": 1019.63,
+          "upper_ci": 2172.25
+        },
+        {
+          "year": 2025,
+          "forecast": 1597.53,
+          "linear_trend": 1597.53,
+          "lower_ci": 1007.97,
+          "upper_ci": 2187.09
+        }
+      ]
+    },
+    "GUJARAT REGION": {
+      "target_year": 2016,
+      "latest_historical_year": 2015,
+      "lpa": 918.2,
+      "predictions": {
+        "ensemble": 861.46,
+        "holt_exponential": 824.23,
+        "ridge_lag": 942.58,
+        "linear_trend": 934.04,
+        "sma_5": 810.26
+      },
+      "confidence_interval_95": {
+        "lower": 313.67,
+        "upper": 1409.25,
+        "margin": 547.79
+      },
+      "departure_from_lpa_pct": -6.18,
+      "imd_category": "Near Normal (Within \u00b110%)",
+      "multi_year_projections": [
+        {
+          "year": 2016,
+          "forecast": 870.17,
+          "linear_trend": 934.04,
+          "lower_ci": 300.89,
+          "upper_ci": 1439.45
+        },
+        {
+          "year": 2017,
+          "forecast": 878.95,
+          "linear_trend": 934.31,
+          "lower_ci": 288.95,
+          "upper_ci": 1468.94
+        },
+        {
+          "year": 2018,
+          "forecast": 887.79,
+          "linear_trend": 934.59,
+          "lower_ci": 277.79,
+          "upper_ci": 1497.78
+        },
+        {
+          "year": 2019,
+          "forecast": 896.69,
+          "linear_trend": 934.86,
+          "lower_ci": 267.33,
+          "upper_ci": 1526.06
+        },
+        {
+          "year": 2020,
+          "forecast": 905.66,
+          "linear_trend": 935.13,
+          "lower_ci": 257.51,
+          "upper_ci": 1553.82
+        },
+        {
+          "year": 2021,
+          "forecast": 914.7,
+          "linear_trend": 935.41,
+          "lower_ci": 248.28,
+          "upper_ci": 1581.12
+        },
+        {
+          "year": 2022,
+          "forecast": 923.8,
+          "linear_trend": 935.68,
+          "lower_ci": 239.61,
+          "upper_ci": 1608.0
+        },
+        {
+          "year": 2023,
+          "forecast": 932.97,
+          "linear_trend": 935.95,
+          "lower_ci": 231.46,
+          "upper_ci": 1634.49
+        },
+        {
+          "year": 2024,
+          "forecast": 936.23,
+          "linear_trend": 936.23,
+          "lower_ci": 217.8,
+          "upper_ci": 1654.65
+        },
+        {
+          "year": 2025,
+          "forecast": 936.5,
+          "linear_trend": 936.5,
+          "lower_ci": 201.56,
+          "upper_ci": 1671.44
+        }
+      ]
+    },
+    "HARYANA DELHI & CHANDIGARH": {
+      "target_year": 2016,
+      "latest_historical_year": 2015,
+      "lpa": 530.49,
+      "predictions": {
+        "ensemble": 458.48,
+        "holt_exponential": 420.64,
+        "ridge_lag": 528.33,
+        "linear_trend": 527.08,
+        "sma_5": 421.14
+      },
+      "confidence_interval_95": {
+        "lower": 178.58,
+        "upper": 738.37,
+        "margin": 279.9
+      },
+      "departure_from_lpa_pct": -13.57,
+      "imd_category": "Deficient (Moderate Deficit)",
+      "multi_year_projections": [
+        {
+          "year": 2016,
+          "forecast": 466.71,
+          "linear_trend": 527.08,
+          "lower_ci": 175.83,
+          "upper_ci": 757.59
+        },
+        {
+          "year": 2017,
+          "forecast": 474.93,
+          "linear_trend": 527.02,
+          "lower_ci": 173.47,
+          "upper_ci": 776.38
+        },
+        {
+          "year": 2018,
+          "forecast": 483.13,
+          "linear_trend": 526.96,
+          "lower_ci": 171.45,
+          "upper_ci": 794.81
+        },
+        {
+          "year": 2019,
+          "forecast": 491.32,
+          "linear_trend": 526.9,
+          "lower_ci": 169.75,
+          "upper_ci": 812.9
+        },
+        {
+          "year": 2020,
+          "forecast": 499.5,
+          "linear_trend": 526.84,
+          "lower_ci": 168.32,
+          "upper_ci": 830.67
+        },
+        {
+          "year": 2021,
+          "forecast": 507.66,
+          "linear_trend": 526.78,
+          "lower_ci": 167.15,
+          "upper_ci": 848.16
+        },
+        {
+          "year": 2022,
+          "forecast": 515.8,
+          "linear_trend": 526.72,
+          "lower_ci": 166.22,
+          "upper_ci": 865.39
+        },
+        {
+          "year": 2023,
+          "forecast": 523.94,
+          "linear_trend": 526.66,
+          "lower_ci": 165.5,
+          "upper_ci": 882.38
+        },
+        {
+          "year": 2024,
+          "forecast": 526.61,
+          "linear_trend": 526.61,
+          "lower_ci": 159.53,
+          "upper_ci": 893.68
+        },
+        {
+          "year": 2025,
+          "forecast": 526.55,
+          "linear_trend": 526.55,
+          "lower_ci": 151.03,
+          "upper_ci": 902.07
+        }
+      ]
+    },
+    "HIMACHAL PRADESH": {
+      "target_year": 2016,
+      "latest_historical_year": 2015,
+      "lpa": 1260.34,
+      "predictions": {
+        "ensemble": 1100.48,
+        "holt_exponential": 1086.43,
+        "ridge_lag": 1116.44,
+        "linear_trend": 1205.05,
+        "sma_5": 1098.26
+      },
+      "confidence_interval_95": {
+        "lower": 617.64,
+        "upper": 1583.32,
+        "margin": 482.84
+      },
+      "departure_from_lpa_pct": -12.68,
+      "imd_category": "Deficient (Moderate Deficit)",
+      "multi_year_projections": [
+        {
+          "year": 2016,
+          "forecast": 1113.03,
+          "linear_trend": 1205.05,
+          "lower_ci": 611.25,
+          "upper_ci": 1614.81
+        },
+        {
+          "year": 2017,
+          "forecast": 1125.35,
+          "linear_trend": 1204.1,
+          "lower_ci": 605.31,
+          "upper_ci": 1645.39
+        },
+        {
+          "year": 2018,
+          "forecast": 1137.44,
+          "linear_trend": 1203.14,
+          "lower_ci": 599.77,
+          "upper_ci": 1675.11
+        },
+        {
+          "year": 2019,
+          "forecast": 1149.3,
+          "linear_trend": 1202.19,
+          "lower_ci": 594.56,
+          "upper_ci": 1704.05
+        },
+        {
+          "year": 2020,
+          "forecast": 1160.94,
+          "linear_trend": 1201.24,
+          "lower_ci": 589.63,
+          "upper_ci": 1732.24
+        },
+        {
+          "year": 2021,
+          "forecast": 1172.34,
+          "linear_trend": 1200.29,
+          "lower_ci": 584.94,
+          "upper_ci": 1759.74
+        },
+        {
+          "year": 2022,
+          "forecast": 1183.52,
+          "linear_trend": 1199.33,
+          "lower_ci": 580.45,
+          "upper_ci": 1786.59
+        },
+        {
+          "year": 2023,
+          "forecast": 1194.46,
+          "linear_trend": 1198.38,
+          "lower_ci": 576.12,
+          "upper_ci": 1812.8
+        },
+        {
+          "year": 2024,
+          "forecast": 1197.43,
+          "linear_trend": 1197.43,
+          "lower_ci": 564.18,
+          "upper_ci": 1830.67
+        },
+        {
+          "year": 2025,
+          "forecast": 1196.47,
+          "linear_trend": 1196.47,
+          "lower_ci": 548.67,
+          "upper_ci": 1844.27
+        }
+      ]
+    },
+    "JAMMU & KASHMIR": {
+      "target_year": 2016,
+      "latest_historical_year": 2015,
+      "lpa": 1138.1,
+      "predictions": {
+        "ensemble": 1147.42,
+        "holt_exponential": 1120.0,
+        "ridge_lag": 1224.4,
+        "linear_trend": 1215.78,
+        "sma_5": 1089.6
+      },
+      "confidence_interval_95": {
+        "lower": 694.22,
+        "upper": 1600.61,
+        "margin": 453.2
+      },
+      "departure_from_lpa_pct": 0.82,
+      "imd_category": "Near Normal (Within \u00b110%)",
+      "multi_year_projections": [
+        {
+          "year": 2016,
+          "forecast": 1155.62,
+          "linear_trend": 1215.78,
+          "lower_ci": 684.65,
+          "upper_ci": 1626.6
+        },
+        {
+          "year": 2017,
+          "forecast": 1164.15,
+          "linear_trend": 1217.12,
+          "lower_ci": 676.04,
+          "upper_ci": 1652.25
+        },
+        {
+          "year": 2018,
+          "forecast": 1172.99,
+          "linear_trend": 1218.46,
+          "lower_ci": 668.33,
+          "upper_ci": 1677.65
+        },
+        {
+          "year": 2019,
+          "forecast": 1182.16,
+          "linear_trend": 1219.8,
+          "lower_ci": 661.48,
+          "upper_ci": 1702.84
+        },
+        {
+          "year": 2020,
+          "forecast": 1191.65,
+          "linear_trend": 1221.13,
+          "lower_ci": 655.42,
+          "upper_ci": 1727.88
+        },
+        {
+          "year": 2021,
+          "forecast": 1201.46,
+          "linear_trend": 1222.47,
+          "lower_ci": 650.12,
+          "upper_ci": 1752.8
+        },
+        {
+          "year": 2022,
+          "forecast": 1211.59,
+          "linear_trend": 1223.81,
+          "lower_ci": 645.55,
+          "upper_ci": 1777.63
+        },
+        {
+          "year": 2023,
+          "forecast": 1222.04,
+          "linear_trend": 1225.15,
+          "lower_ci": 641.67,
+          "upper_ci": 1802.42
+        },
+        {
+          "year": 2024,
+          "forecast": 1226.49,
+          "linear_trend": 1226.49,
+          "lower_ci": 632.13,
+          "upper_ci": 1820.85
+        },
+        {
+          "year": 2025,
+          "forecast": 1227.83,
+          "linear_trend": 1227.83,
+          "lower_ci": 619.8,
+          "upper_ci": 1835.86
+        }
+      ]
+    },
+    "JHARKHAND": {
+      "target_year": 2016,
+      "latest_historical_year": 2015,
+      "lpa": 1309.3,
+      "predictions": {
+        "ensemble": 1173.75,
+        "holt_exponential": 1113.97,
+        "ridge_lag": 1222.78,
+        "linear_trend": 1210.62,
+        "sma_5": 1186.28
+      },
+      "confidence_interval_95": {
+        "lower": 799.77,
+        "upper": 1547.72,
+        "margin": 373.97
+      },
+      "departure_from_lpa_pct": -10.35,
+      "imd_category": "Deficient (Moderate Deficit)",
+      "multi_year_projections": [
+        {
+          "year": 2016,
+          "forecast": 1178.17,
+          "linear_trend": 1210.62,
+          "lower_ci": 789.53,
+          "upper_ci": 1566.82
+        },
+        {
+          "year": 2017,
+          "forecast": 1182.19,
+          "linear_trend": 1208.92,
+          "lower_ci": 779.41,
+          "upper_ci": 1584.97
+        },
+        {
+          "year": 2018,
+          "forecast": 1185.8,
+          "linear_trend": 1207.22,
+          "lower_ci": 769.36,
+          "upper_ci": 1602.24
+        },
+        {
+          "year": 2019,
+          "forecast": 1189.0,
+          "linear_trend": 1205.52,
+          "lower_ci": 759.33,
+          "upper_ci": 1618.66
+        },
+        {
+          "year": 2020,
+          "forecast": 1191.79,
+          "linear_trend": 1203.81,
+          "lower_ci": 749.3,
+          "upper_ci": 1634.28
+        },
+        {
+          "year": 2021,
+          "forecast": 1194.17,
+          "linear_trend": 1202.11,
+          "lower_ci": 739.21,
+          "upper_ci": 1649.13
+        },
+        {
+          "year": 2022,
+          "forecast": 1196.15,
+          "linear_trend": 1200.41,
+          "lower_ci": 729.05,
+          "upper_ci": 1663.24
+        },
+        {
+          "year": 2023,
+          "forecast": 1197.71,
+          "linear_trend": 1198.71,
+          "lower_ci": 718.79,
+          "upper_ci": 1676.63
+        },
+        {
+          "year": 2024,
+          "forecast": 1197.01,
+          "linear_trend": 1197.01,
+          "lower_ci": 706.55,
+          "upper_ci": 1687.47
+        },
+        {
+          "year": 2025,
+          "forecast": 1195.31,
+          "linear_trend": 1195.31,
+          "lower_ci": 693.57,
+          "upper_ci": 1697.05
+        }
+      ]
+    },
+    "KERALA": {
+      "target_year": 2016,
+      "latest_historical_year": 2015,
+      "lpa": 2925.5,
+      "predictions": {
+        "ensemble": 2850.93,
+        "holt_exponential": 2870.8,
+        "ridge_lag": 2859.39,
+        "linear_trend": 2760.7,
+        "sma_5": 2817.86
+      },
+      "confidence_interval_95": {
+        "lower": 2041.14,
+        "upper": 3660.72,
+        "margin": 809.79
+      },
+      "departure_from_lpa_pct": -2.55,
+      "imd_category": "Near Normal (Within \u00b110%)",
+      "multi_year_projections": [
+        {
+          "year": 2016,
+          "forecast": 2840.1,
+          "linear_trend": 2760.7,
+          "lower_ci": 1998.54,
+          "upper_ci": 3681.66
+        },
+        {
+          "year": 2017,
+          "forecast": 2828.59,
+          "linear_trend": 2757.85,
+          "lower_ci": 1956.42,
+          "upper_ci": 3700.76
+        },
+        {
+          "year": 2018,
+          "forecast": 2816.4,
+          "linear_trend": 2755.01,
+          "lower_ci": 1914.65,
+          "upper_ci": 3718.14
+        },
+        {
+          "year": 2019,
+          "forecast": 2803.52,
+          "linear_trend": 2752.17,
+          "lower_ci": 1873.15,
+          "upper_ci": 3733.9
+        },
+        {
+          "year": 2020,
+          "forecast": 2789.97,
+          "linear_trend": 2749.33,
+          "lower_ci": 1831.81,
+          "upper_ci": 3748.13
+        },
+        {
+          "year": 2021,
+          "forecast": 2775.73,
+          "linear_trend": 2746.49,
+          "lower_ci": 1790.58,
+          "upper_ci": 3760.88
+        },
+        {
+          "year": 2022,
+          "forecast": 2760.81,
+          "linear_trend": 2743.65,
+          "lower_ci": 1749.38,
+          "upper_ci": 3772.24
+        },
+        {
+          "year": 2023,
+          "forecast": 2745.21,
+          "linear_trend": 2740.81,
+          "lower_ci": 1708.17,
+          "upper_ci": 3782.25
+        },
+        {
+          "year": 2024,
+          "forecast": 2737.96,
+          "linear_trend": 2737.96,
+          "lower_ci": 1675.93,
+          "upper_ci": 3800.0
+        },
+        {
+          "year": 2025,
+          "forecast": 2735.12,
+          "linear_trend": 2735.12,
+          "lower_ci": 1648.67,
+          "upper_ci": 3821.57
+        }
+      ]
+    },
+    "KONKAN & GOA": {
+      "target_year": 2016,
+      "latest_historical_year": 2015,
+      "lpa": 2977.68,
+      "predictions": {
+        "ensemble": 2969.57,
+        "holt_exponential": 2965.98,
+        "ridge_lag": 2911.59,
+        "linear_trend": 3165.04,
+        "sma_5": 3041.4
+      },
+      "confidence_interval_95": {
+        "lower": 2038.41,
+        "upper": 3900.72,
+        "margin": 931.16
+      },
+      "departure_from_lpa_pct": -0.27,
+      "imd_category": "Near Normal (Within \u00b110%)",
+      "multi_year_projections": [
+        {
+          "year": 2016,
+          "forecast": 2993.03,
+          "linear_trend": 3165.04,
+          "lower_ci": 2025.34,
+          "upper_ci": 3960.71
+        },
+        {
+          "year": 2017,
+          "forecast": 3017.26,
+          "linear_trend": 3168.27,
+          "lower_ci": 2014.37,
+          "upper_ci": 4020.14
+        },
+        {
+          "year": 2018,
+          "forecast": 3042.27,
+          "linear_trend": 3171.5,
+          "lower_ci": 2005.37,
+          "upper_ci": 4079.16
+        },
+        {
+          "year": 2019,
+          "forecast": 3068.05,
+          "linear_trend": 3174.73,
+          "lower_ci": 1998.23,
+          "upper_ci": 4137.87
+        },
+        {
+          "year": 2020,
+          "forecast": 3094.61,
+          "linear_trend": 3177.97,
+          "lower_ci": 1992.85,
+          "upper_ci": 4196.37
+        },
+        {
+          "year": 2021,
+          "forecast": 3121.94,
+          "linear_trend": 3181.2,
+          "lower_ci": 1989.14,
+          "upper_ci": 4254.74
+        },
+        {
+          "year": 2022,
+          "forecast": 3150.05,
+          "linear_trend": 3184.43,
+          "lower_ci": 1987.04,
+          "upper_ci": 4313.06
+        },
+        {
+          "year": 2023,
+          "forecast": 3178.93,
+          "linear_trend": 3187.66,
+          "lower_ci": 1986.47,
+          "upper_ci": 4371.39
+        },
+        {
+          "year": 2024,
+          "forecast": 3190.89,
+          "linear_trend": 3190.89,
+          "lower_ci": 1969.69,
+          "upper_ci": 4412.09
+        },
+        {
+          "year": 2025,
+          "forecast": 3194.12,
+          "linear_trend": 3194.12,
+          "lower_ci": 1944.84,
+          "upper_ci": 4443.39
+        }
+      ]
+    },
+    "LAKSHADWEEP": {
+      "target_year": 2016,
+      "latest_historical_year": 2015,
+      "lpa": 1599.84,
+      "predictions": {
+        "ensemble": 1534.28,
+        "holt_exponential": 1543.21,
+        "ridge_lag": 1571.29,
+        "linear_trend": 1549.39,
+        "sma_5": 1480.68
+      },
+      "confidence_interval_95": {
+        "lower": 1015.24,
+        "upper": 2053.31,
+        "margin": 519.03
+      },
+      "departure_from_lpa_pct": -4.1,
+      "imd_category": "Near Normal (Within \u00b110%)",
+      "multi_year_projections": [
+        {
+          "year": 2016,
+          "forecast": 1536.09,
+          "linear_trend": 1549.39,
+          "lower_ci": 996.7,
+          "upper_ci": 2075.49
+        },
+        {
+          "year": 2017,
+          "forecast": 1537.7,
+          "linear_trend": 1548.51,
+          "lower_ci": 978.68,
+          "upper_ci": 2096.71
+        },
+        {
+          "year": 2018,
+          "forecast": 1539.09,
+          "linear_trend": 1547.64,
+          "lower_ci": 961.12,
+          "upper_ci": 2117.06
+        },
+        {
+          "year": 2019,
+          "forecast": 1540.27,
+          "linear_trend": 1546.76,
+          "lower_ci": 943.95,
+          "upper_ci": 2136.6
+        },
+        {
+          "year": 2020,
+          "forecast": 1541.24,
+          "linear_trend": 1545.89,
+          "lower_ci": 927.11,
+          "upper_ci": 2155.37
+        },
+        {
+          "year": 2021,
+          "forecast": 1542.01,
+          "linear_trend": 1545.01,
+          "lower_ci": 910.57,
+          "upper_ci": 2173.44
+        },
+        {
+          "year": 2022,
+          "forecast": 1542.56,
+          "linear_trend": 1544.14,
+          "lower_ci": 894.29,
+          "upper_ci": 2190.83
+        },
+        {
+          "year": 2023,
+          "forecast": 1542.9,
+          "linear_trend": 1543.26,
+          "lower_ci": 878.21,
+          "upper_ci": 2207.59
+        },
+        {
+          "year": 2024,
+          "forecast": 1542.39,
+          "linear_trend": 1542.39,
+          "lower_ci": 861.68,
+          "upper_ci": 2223.09
+        },
+        {
+          "year": 2025,
+          "forecast": 1541.51,
+          "linear_trend": 1541.51,
+          "lower_ci": 845.15,
+          "upper_ci": 2237.87
+        }
+      ]
+    },
+    "MADHYA MAHARASHTRA": {
+      "target_year": 2016,
+      "latest_historical_year": 2015,
+      "lpa": 880.22,
+      "predictions": {
+        "ensemble": 830.67,
+        "holt_exponential": 829.29,
+        "ridge_lag": 860.48,
+        "linear_trend": 952.59,
+        "sma_5": 797.5
+      },
+      "confidence_interval_95": {
+        "lower": 528.38,
+        "upper": 1132.95,
+        "margin": 302.29
+      },
+      "departure_from_lpa_pct": -5.63,
+      "imd_category": "Near Normal (Within \u00b110%)",
+      "multi_year_projections": [
+        {
+          "year": 2016,
+          "forecast": 845.3,
+          "linear_trend": 952.59,
+          "lower_ci": 531.15,
+          "upper_ci": 1159.44
+        },
+        {
+          "year": 2017,
+          "forecast": 860.23,
+          "linear_trend": 953.84,
+          "lower_ci": 534.66,
+          "upper_ci": 1185.8
+        },
+        {
+          "year": 2018,
+          "forecast": 875.46,
+          "linear_trend": 955.09,
+          "lower_ci": 538.85,
+          "upper_ci": 1212.07
+        },
+        {
+          "year": 2019,
+          "forecast": 890.99,
+          "linear_trend": 956.34,
+          "lower_ci": 543.69,
+          "upper_ci": 1238.29
+        },
+        {
+          "year": 2020,
+          "forecast": 906.82,
+          "linear_trend": 957.59,
+          "lower_ci": 549.15,
+          "upper_ci": 1264.49
+        },
+        {
+          "year": 2021,
+          "forecast": 922.95,
+          "linear_trend": 958.83,
+          "lower_ci": 555.2,
+          "upper_ci": 1290.69
+        },
+        {
+          "year": 2022,
+          "forecast": 939.37,
+          "linear_trend": 960.08,
+          "lower_ci": 561.82,
+          "upper_ci": 1316.93
+        },
+        {
+          "year": 2023,
+          "forecast": 956.1,
+          "linear_trend": 961.33,
+          "lower_ci": 568.99,
+          "upper_ci": 1343.22
+        },
+        {
+          "year": 2024,
+          "forecast": 962.58,
+          "linear_trend": 962.58,
+          "lower_ci": 566.13,
+          "upper_ci": 1359.02
+        },
+        {
+          "year": 2025,
+          "forecast": 963.82,
+          "linear_trend": 963.82,
+          "lower_ci": 558.27,
+          "upper_ci": 1369.38
+        }
+      ]
+    },
+    "MATATHWADA": {
+      "target_year": 2016,
+      "latest_historical_year": 2015,
+      "lpa": 790.68,
+      "predictions": {
+        "ensemble": 663.55,
+        "holt_exponential": 636.7,
+        "ridge_lag": 717.56,
+        "linear_trend": 779.62,
+        "sma_5": 631.86
+      },
+      "confidence_interval_95": {
+        "lower": 291.26,
+        "upper": 1035.84,
+        "margin": 372.29
+      },
+      "departure_from_lpa_pct": -16.08,
+      "imd_category": "Deficient (Moderate Deficit)",
+      "multi_year_projections": [
+        {
+          "year": 2016,
+          "forecast": 677.48,
+          "linear_trend": 779.62,
+          "lower_ci": 290.58,
+          "upper_ci": 1064.37
+        },
+        {
+          "year": 2017,
+          "forecast": 691.36,
+          "linear_trend": 779.43,
+          "lower_ci": 290.39,
+          "upper_ci": 1092.33
+        },
+        {
+          "year": 2018,
+          "forecast": 705.2,
+          "linear_trend": 779.23,
+          "lower_ci": 290.63,
+          "upper_ci": 1119.76
+        },
+        {
+          "year": 2019,
+          "forecast": 718.99,
+          "linear_trend": 779.04,
+          "lower_ci": 291.26,
+          "upper_ci": 1146.72
+        },
+        {
+          "year": 2020,
+          "forecast": 732.73,
+          "linear_trend": 778.85,
+          "lower_ci": 292.23,
+          "upper_ci": 1173.23
+        },
+        {
+          "year": 2021,
+          "forecast": 746.43,
+          "linear_trend": 778.66,
+          "lower_ci": 293.52,
+          "upper_ci": 1199.34
+        },
+        {
+          "year": 2022,
+          "forecast": 760.08,
+          "linear_trend": 778.47,
+          "lower_ci": 295.1,
+          "upper_ci": 1225.07
+        },
+        {
+          "year": 2023,
+          "forecast": 773.69,
+          "linear_trend": 778.28,
+          "lower_ci": 296.93,
+          "upper_ci": 1250.46
+        },
+        {
+          "year": 2024,
+          "forecast": 778.09,
+          "linear_trend": 778.09,
+          "lower_ci": 289.84,
+          "upper_ci": 1266.34
+        },
+        {
+          "year": 2025,
+          "forecast": 777.9,
+          "linear_trend": 777.9,
+          "lower_ci": 278.42,
+          "upper_ci": 1277.38
+        }
+      ]
+    },
+    "NAGA MANI MIZO TRIPURA": {
+      "target_year": 2016,
+      "latest_historical_year": 2015,
+      "lpa": 2433.64,
+      "predictions": {
+        "ensemble": 1850.27,
+        "holt_exponential": 1748.1,
+        "ridge_lag": 2013.64,
+        "linear_trend": 2179.06,
+        "sma_5": 1778.88
+      },
+      "confidence_interval_95": {
+        "lower": 1050.66,
+        "upper": 2649.89,
+        "margin": 799.62
+      },
+      "departure_from_lpa_pct": -23.97,
+      "imd_category": "Scanty (Severe Deficit)",
+      "multi_year_projections": [
+        {
+          "year": 2016,
+          "forecast": 1889.73,
+          "linear_trend": 2179.06,
+          "lower_ci": 1058.74,
+          "upper_ci": 2720.71
+        },
+        {
+          "year": 2017,
+          "forecast": 1928.13,
+          "linear_trend": 2174.67,
+          "lower_ci": 1066.92,
+          "upper_ci": 2789.34
+        },
+        {
+          "year": 2018,
+          "forecast": 1965.48,
+          "linear_trend": 2170.28,
+          "lower_ci": 1075.06,
+          "upper_ci": 2855.89
+        },
+        {
+          "year": 2019,
+          "forecast": 2001.77,
+          "linear_trend": 2165.89,
+          "lower_ci": 1083.08,
+          "upper_ci": 2920.46
+        },
+        {
+          "year": 2020,
+          "forecast": 2037.01,
+          "linear_trend": 2161.51,
+          "lower_ci": 1090.89,
+          "upper_ci": 2983.13
+        },
+        {
+          "year": 2021,
+          "forecast": 2071.2,
+          "linear_trend": 2157.12,
+          "lower_ci": 1098.42,
+          "upper_ci": 3043.98
+        },
+        {
+          "year": 2022,
+          "forecast": 2104.33,
+          "linear_trend": 2152.73,
+          "lower_ci": 1105.61,
+          "upper_ci": 3103.05
+        },
+        {
+          "year": 2023,
+          "forecast": 2136.42,
+          "linear_trend": 2148.34,
+          "lower_ci": 1112.41,
+          "upper_ci": 3160.42
+        },
+        {
+          "year": 2024,
+          "forecast": 2143.95,
+          "linear_trend": 2143.95,
+          "lower_ci": 1095.26,
+          "upper_ci": 3192.64
+        },
+        {
+          "year": 2025,
+          "forecast": 2139.56,
+          "linear_trend": 2139.56,
+          "lower_ci": 1066.76,
+          "upper_ci": 3212.36
+        }
+      ]
+    },
+    "NORTH INTERIOR KARNATAKA": {
+      "target_year": 2016,
+      "latest_historical_year": 2015,
+      "lpa": 717.79,
+      "predictions": {
+        "ensemble": 683.02,
+        "holt_exponential": 679.68,
+        "ridge_lag": 711.09,
+        "linear_trend": 739.37,
+        "sma_5": 654.18
+      },
+      "confidence_interval_95": {
+        "lower": 420.28,
+        "upper": 945.77,
+        "margin": 262.74
+      },
+      "departure_from_lpa_pct": -4.84,
+      "imd_category": "Near Normal (Within \u00b110%)",
+      "multi_year_projections": [
+        {
+          "year": 2016,
+          "forecast": 689.79,
+          "linear_trend": 739.37,
+          "lower_ci": 416.74,
+          "upper_ci": 962.84
+        },
+        {
+          "year": 2017,
+          "forecast": 696.64,
+          "linear_trend": 739.74,
+          "lower_ci": 413.65,
+          "upper_ci": 979.62
+        },
+        {
+          "year": 2018,
+          "forecast": 703.58,
+          "linear_trend": 740.12,
+          "lower_ci": 411.0,
+          "upper_ci": 996.16
+        },
+        {
+          "year": 2019,
+          "forecast": 710.61,
+          "linear_trend": 740.49,
+          "lower_ci": 408.74,
+          "upper_ci": 1012.48
+        },
+        {
+          "year": 2020,
+          "forecast": 717.73,
+          "linear_trend": 740.86,
+          "lower_ci": 406.84,
+          "upper_ci": 1028.61
+        },
+        {
+          "year": 2021,
+          "forecast": 724.93,
+          "linear_trend": 741.23,
+          "lower_ci": 405.29,
+          "upper_ci": 1044.57
+        },
+        {
+          "year": 2022,
+          "forecast": 732.23,
+          "linear_trend": 741.6,
+          "lower_ci": 404.07,
+          "upper_ci": 1060.4
+        },
+        {
+          "year": 2023,
+          "forecast": 739.62,
+          "linear_trend": 741.98,
+          "lower_ci": 403.14,
+          "upper_ci": 1076.09
+        },
+        {
+          "year": 2024,
+          "forecast": 742.35,
+          "linear_trend": 742.35,
+          "lower_ci": 397.76,
+          "upper_ci": 1086.93
+        },
+        {
+          "year": 2025,
+          "forecast": 742.72,
+          "linear_trend": 742.72,
+          "lower_ci": 390.21,
+          "upper_ci": 1095.23
+        }
+      ]
+    },
+    "ORISSA": {
+      "target_year": 2016,
+      "latest_historical_year": 2015,
+      "lpa": 1458.17,
+      "predictions": {
+        "ensemble": 1424.28,
+        "holt_exponential": 1419.33,
+        "ridge_lag": 1427.5,
+        "linear_trend": 1408.43,
+        "sma_5": 1426.3
+      },
+      "confidence_interval_95": {
+        "lower": 1060.26,
+        "upper": 1788.3,
+        "margin": 364.02
+      },
+      "departure_from_lpa_pct": -2.32,
+      "imd_category": "Near Normal (Within \u00b110%)",
+      "multi_year_projections": [
+        {
+          "year": 2016,
+          "forecast": 1422.38,
+          "linear_trend": 1408.43,
+          "lower_ci": 1044.08,
+          "upper_ci": 1800.68
+        },
+        {
+          "year": 2017,
+          "forecast": 1420.27,
+          "linear_trend": 1407.57,
+          "lower_ci": 1028.21,
+          "upper_ci": 1812.33
+        },
+        {
+          "year": 2018,
+          "forecast": 1417.96,
+          "linear_trend": 1406.72,
+          "lower_ci": 1012.6,
+          "upper_ci": 1823.31
+        },
+        {
+          "year": 2019,
+          "forecast": 1415.44,
+          "linear_trend": 1405.86,
+          "lower_ci": 997.21,
+          "upper_ci": 1833.66
+        },
+        {
+          "year": 2020,
+          "forecast": 1412.71,
+          "linear_trend": 1405.0,
+          "lower_ci": 982.0,
+          "upper_ci": 1843.42
+        },
+        {
+          "year": 2021,
+          "forecast": 1409.78,
+          "linear_trend": 1404.14,
+          "lower_ci": 966.94,
+          "upper_ci": 1852.63
+        },
+        {
+          "year": 2022,
+          "forecast": 1406.65,
+          "linear_trend": 1403.29,
+          "lower_ci": 951.99,
+          "upper_ci": 1861.3
+        },
+        {
+          "year": 2023,
+          "forecast": 1403.3,
+          "linear_trend": 1402.43,
+          "lower_ci": 937.13,
+          "upper_ci": 1869.47
+        },
+        {
+          "year": 2024,
+          "forecast": 1401.57,
+          "linear_trend": 1401.57,
+          "lower_ci": 924.17,
+          "upper_ci": 1878.97
+        },
+        {
+          "year": 2025,
+          "forecast": 1400.71,
+          "linear_trend": 1400.71,
+          "lower_ci": 912.33,
+          "upper_ci": 1889.09
+        }
+      ]
+    },
+    "PUNJAB": {
+      "target_year": 2016,
+      "latest_historical_year": 2015,
+      "lpa": 593.54,
+      "predictions": {
+        "ensemble": 526.5,
+        "holt_exponential": 498.23,
+        "ridge_lag": 546.81,
+        "linear_trend": 586.29,
+        "sma_5": 535.78
+      },
+      "confidence_interval_95": {
+        "lower": 205.02,
+        "upper": 847.97,
+        "margin": 321.48
+      },
+      "departure_from_lpa_pct": -11.3,
+      "imd_category": "Deficient (Moderate Deficit)",
+      "multi_year_projections": [
+        {
+          "year": 2016,
+          "forecast": 533.67,
+          "linear_trend": 586.29,
+          "lower_ci": 199.59,
+          "upper_ci": 867.76
+        },
+        {
+          "year": 2017,
+          "forecast": 540.82,
+          "linear_trend": 586.16,
+          "lower_ci": 194.58,
+          "upper_ci": 887.06
+        },
+        {
+          "year": 2018,
+          "forecast": 547.93,
+          "linear_trend": 586.04,
+          "lower_ci": 189.95,
+          "upper_ci": 905.91
+        },
+        {
+          "year": 2019,
+          "forecast": 555.02,
+          "linear_trend": 585.91,
+          "lower_ci": 185.67,
+          "upper_ci": 924.36
+        },
+        {
+          "year": 2020,
+          "forecast": 562.07,
+          "linear_trend": 585.79,
+          "lower_ci": 181.7,
+          "upper_ci": 942.45
+        },
+        {
+          "year": 2021,
+          "forecast": 569.09,
+          "linear_trend": 585.66,
+          "lower_ci": 178.0,
+          "upper_ci": 960.19
+        },
+        {
+          "year": 2022,
+          "forecast": 576.09,
+          "linear_trend": 585.54,
+          "lower_ci": 174.57,
+          "upper_ci": 977.61
+        },
+        {
+          "year": 2023,
+          "forecast": 583.05,
+          "linear_trend": 585.41,
+          "lower_ci": 171.36,
+          "upper_ci": 994.74
+        },
+        {
+          "year": 2024,
+          "forecast": 585.28,
+          "linear_trend": 585.28,
+          "lower_ci": 163.67,
+          "upper_ci": 1006.9
+        },
+        {
+          "year": 2025,
+          "forecast": 585.16,
+          "linear_trend": 585.16,
+          "lower_ci": 153.86,
+          "upper_ci": 1016.46
+        }
+      ]
+    },
+    "RAYALSEEMA": {
+      "target_year": 2016,
+      "latest_historical_year": 2015,
+      "lpa": 766.21,
+      "predictions": {
+        "ensemble": 786.05,
+        "holt_exponential": 797.36,
+        "ridge_lag": 794.51,
+        "linear_trend": 798.18,
+        "sma_5": 762.98
+      },
+      "confidence_interval_95": {
+        "lower": 492.0,
+        "upper": 1080.09,
+        "margin": 294.05
+      },
+      "departure_from_lpa_pct": 2.59,
+      "imd_category": "Near Normal (Within \u00b110%)",
+      "multi_year_projections": [
+        {
+          "year": 2016,
+          "forecast": 787.5,
+          "linear_trend": 798.18,
+          "lower_ci": 481.92,
+          "upper_ci": 1093.09
+        },
+        {
+          "year": 2017,
+          "forecast": 789.09,
+          "linear_trend": 798.73,
+          "lower_ci": 472.39,
+          "upper_ci": 1105.79
+        },
+        {
+          "year": 2018,
+          "forecast": 790.81,
+          "linear_trend": 799.28,
+          "lower_ci": 463.37,
+          "upper_ci": 1118.25
+        },
+        {
+          "year": 2019,
+          "forecast": 792.66,
+          "linear_trend": 799.83,
+          "lower_ci": 454.83,
+          "upper_ci": 1130.5
+        },
+        {
+          "year": 2020,
+          "forecast": 794.65,
+          "linear_trend": 800.38,
+          "lower_ci": 446.73,
+          "upper_ci": 1142.57
+        },
+        {
+          "year": 2021,
+          "forecast": 796.77,
+          "linear_trend": 800.93,
+          "lower_ci": 439.04,
+          "upper_ci": 1154.49
+        },
+        {
+          "year": 2022,
+          "forecast": 799.01,
+          "linear_trend": 801.48,
+          "lower_ci": 431.75,
+          "upper_ci": 1166.28
+        },
+        {
+          "year": 2023,
+          "forecast": 801.4,
+          "linear_trend": 802.04,
+          "lower_ci": 424.83,
+          "upper_ci": 1177.96
+        },
+        {
+          "year": 2024,
+          "forecast": 802.59,
+          "linear_trend": 802.59,
+          "lower_ci": 416.95,
+          "upper_ci": 1188.23
+        },
+        {
+          "year": 2025,
+          "forecast": 803.14,
+          "linear_trend": 803.14,
+          "lower_ci": 408.63,
+          "upper_ci": 1197.64
+        }
+      ]
+    },
+    "SAURASHTRA & KUTCH": {
+      "target_year": 2016,
+      "latest_historical_year": 2015,
+      "lpa": 495.14,
+      "predictions": {
+        "ensemble": 555.13,
+        "holt_exponential": 577.0,
+        "ridge_lag": 567.95,
+        "linear_trend": 559.02,
+        "sma_5": 514.66
+      },
+      "confidence_interval_95": {
+        "lower": 164.22,
+        "upper": 946.05,
+        "margin": 390.91
+      },
+      "departure_from_lpa_pct": 12.12,
+      "imd_category": "Above Normal / Surplus",
+      "multi_year_projections": [
+        {
+          "year": 2016,
+          "forecast": 555.6,
+          "linear_trend": 559.02,
+          "lower_ci": 149.35,
+          "upper_ci": 961.85
+        },
+        {
+          "year": 2017,
+          "forecast": 556.33,
+          "linear_trend": 560.12,
+          "lower_ci": 135.3,
+          "upper_ci": 977.36
+        },
+        {
+          "year": 2018,
+          "forecast": 557.33,
+          "linear_trend": 561.22,
+          "lower_ci": 122.02,
+          "upper_ci": 992.63
+        },
+        {
+          "year": 2019,
+          "forecast": 558.58,
+          "linear_trend": 562.32,
+          "lower_ci": 109.46,
+          "upper_ci": 1007.71
+        },
+        {
+          "year": 2020,
+          "forecast": 560.11,
+          "linear_trend": 563.43,
+          "lower_ci": 97.57,
+          "upper_ci": 1022.64
+        },
+        {
+          "year": 2021,
+          "forecast": 561.9,
+          "linear_trend": 564.53,
+          "lower_ci": 86.33,
+          "upper_ci": 1037.46
+        },
+        {
+          "year": 2022,
+          "forecast": 563.95,
+          "linear_trend": 565.63,
+          "lower_ci": 75.7,
+          "upper_ci": 1052.2
+        },
+        {
+          "year": 2023,
+          "forecast": 566.27,
+          "linear_trend": 566.73,
+          "lower_ci": 65.65,
+          "upper_ci": 1066.88
+        },
+        {
+          "year": 2024,
+          "forecast": 567.83,
+          "linear_trend": 567.83,
+          "lower_ci": 55.15,
+          "upper_ci": 1080.51
+        },
+        {
+          "year": 2025,
+          "forecast": 568.93,
+          "linear_trend": 568.93,
+          "lower_ci": 44.47,
+          "upper_ci": 1093.4
+        }
+      ]
+    },
+    "SOUTH INTERIOR KARNATAKA": {
+      "target_year": 2016,
+      "latest_historical_year": 2015,
+      "lpa": 1040.38,
+      "predictions": {
+        "ensemble": 1109.27,
+        "holt_exponential": 1120.31,
+        "ridge_lag": 1128.05,
+        "linear_trend": 1102.93,
+        "sma_5": 1074.5
+      },
+      "confidence_interval_95": {
+        "lower": 820.98,
+        "upper": 1397.57,
+        "margin": 288.3
+      },
+      "departure_from_lpa_pct": 6.62,
+      "imd_category": "Near Normal (Within \u00b110%)",
+      "multi_year_projections": [
+        {
+          "year": 2016,
+          "forecast": 1108.51,
+          "linear_trend": 1102.93,
+          "lower_ci": 808.9,
+          "upper_ci": 1408.12
+        },
+        {
+          "year": 2017,
+          "forecast": 1108.01,
+          "linear_trend": 1104.0,
+          "lower_ci": 797.5,
+          "upper_ci": 1418.52
+        },
+        {
+          "year": 2018,
+          "forecast": 1107.77,
+          "linear_trend": 1105.08,
+          "lower_ci": 786.73,
+          "upper_ci": 1428.8
+        },
+        {
+          "year": 2019,
+          "forecast": 1107.78,
+          "linear_trend": 1106.16,
+          "lower_ci": 776.55,
+          "upper_ci": 1439.01
+        },
+        {
+          "year": 2020,
+          "forecast": 1108.05,
+          "linear_trend": 1107.24,
+          "lower_ci": 766.93,
+          "upper_ci": 1449.17
+        },
+        {
+          "year": 2021,
+          "forecast": 1108.59,
+          "linear_trend": 1108.32,
+          "lower_ci": 757.86,
+          "upper_ci": 1459.32
+        },
+        {
+          "year": 2022,
+          "forecast": 1109.38,
+          "linear_trend": 1109.4,
+          "lower_ci": 749.29,
+          "upper_ci": 1469.46
+        },
+        {
+          "year": 2023,
+          "forecast": 1110.43,
+          "linear_trend": 1110.47,
+          "lower_ci": 741.23,
+          "upper_ci": 1479.63
+        },
+        {
+          "year": 2024,
+          "forecast": 1111.55,
+          "linear_trend": 1111.55,
+          "lower_ci": 733.45,
+          "upper_ci": 1489.65
+        },
+        {
+          "year": 2025,
+          "forecast": 1112.63,
+          "linear_trend": 1112.63,
+          "lower_ci": 725.84,
+          "upper_ci": 1499.42
+        }
+      ]
+    },
+    "SUB HIMALAYAN WEST BENGAL & SIKKIM": {
+      "target_year": 2016,
+      "latest_historical_year": 2015,
+      "lpa": 2752.2,
+      "predictions": {
+        "ensemble": 2505.42,
+        "holt_exponential": 2404.37,
+        "ridge_lag": 2645.7,
+        "linear_trend": 2753.67,
+        "sma_5": 2459.64
+      },
+      "confidence_interval_95": {
+        "lower": 1840.28,
+        "upper": 3170.55,
+        "margin": 665.13
+      },
+      "departure_from_lpa_pct": -8.97,
+      "imd_category": "Near Normal (Within \u00b110%)",
+      "multi_year_projections": [
+        {
+          "year": 2016,
+          "forecast": 2535.21,
+          "linear_trend": 2753.67,
+          "lower_ci": 1843.98,
+          "upper_ci": 3226.43
+        },
+        {
+          "year": 2017,
+          "forecast": 2565.0,
+          "linear_trend": 2753.7,
+          "lower_ci": 1848.64,
+          "upper_ci": 3281.37
+        },
+        {
+          "year": 2018,
+          "forecast": 2594.81,
+          "linear_trend": 2753.72,
+          "lower_ci": 1854.15,
+          "upper_ci": 3335.46
+        },
+        {
+          "year": 2019,
+          "forecast": 2624.62,
+          "linear_trend": 2753.75,
+          "lower_ci": 1860.44,
+          "upper_ci": 3388.79
+        },
+        {
+          "year": 2020,
+          "forecast": 2654.43,
+          "linear_trend": 2753.77,
+          "lower_ci": 1867.44,
+          "upper_ci": 3441.42
+        },
+        {
+          "year": 2021,
+          "forecast": 2684.25,
+          "linear_trend": 2753.8,
+          "lower_ci": 1875.09,
+          "upper_ci": 3493.42
+        },
+        {
+          "year": 2022,
+          "forecast": 2714.08,
+          "linear_trend": 2753.82,
+          "lower_ci": 1883.33,
+          "upper_ci": 3544.83
+        },
+        {
+          "year": 2023,
+          "forecast": 2743.91,
+          "linear_trend": 2753.85,
+          "lower_ci": 1892.13,
+          "upper_ci": 3595.7
+        },
+        {
+          "year": 2024,
+          "forecast": 2753.88,
+          "linear_trend": 2753.88,
+          "lower_ci": 1881.56,
+          "upper_ci": 3626.19
+        },
+        {
+          "year": 2025,
+          "forecast": 2753.9,
+          "linear_trend": 2753.9,
+          "lower_ci": 1861.53,
+          "upper_ci": 3646.27
+        }
+      ]
+    },
+    "TAMIL NADU": {
+      "target_year": 2016,
+      "latest_historical_year": 2015,
+      "lpa": 943.73,
+      "predictions": {
+        "ensemble": 968.36,
+        "holt_exponential": 962.77,
+        "ridge_lag": 1045.84,
+        "linear_trend": 922.95,
+        "sma_5": 884.5
+      },
+      "confidence_interval_95": {
+        "lower": 642.4,
+        "upper": 1294.33,
+        "margin": 325.96
+      },
+      "departure_from_lpa_pct": 2.61,
+      "imd_category": "Near Normal (Within \u00b110%)",
+      "multi_year_projections": [
+        {
+          "year": 2016,
+          "forecast": 962.92,
+          "linear_trend": 922.95,
+          "lower_ci": 624.17,
+          "upper_ci": 1301.66
+        },
+        {
+          "year": 2017,
+          "forecast": 957.38,
+          "linear_trend": 922.59,
+          "lower_ci": 606.31,
+          "upper_ci": 1308.45
+        },
+        {
+          "year": 2018,
+          "forecast": 951.76,
+          "linear_trend": 922.23,
+          "lower_ci": 588.78,
+          "upper_ci": 1314.73
+        },
+        {
+          "year": 2019,
+          "forecast": 946.05,
+          "linear_trend": 921.88,
+          "lower_ci": 571.55,
+          "upper_ci": 1320.55
+        },
+        {
+          "year": 2020,
+          "forecast": 940.26,
+          "linear_trend": 921.52,
+          "lower_ci": 554.57,
+          "upper_ci": 1325.94
+        },
+        {
+          "year": 2021,
+          "forecast": 934.38,
+          "linear_trend": 921.16,
+          "lower_ci": 537.83,
+          "upper_ci": 1330.93
+        },
+        {
+          "year": 2022,
+          "forecast": 928.41,
+          "linear_trend": 920.8,
+          "lower_ci": 521.28,
+          "upper_ci": 1335.54
+        },
+        {
+          "year": 2023,
+          "forecast": 922.36,
+          "linear_trend": 920.44,
+          "lower_ci": 504.92,
+          "upper_ci": 1339.79
+        },
+        {
+          "year": 2024,
+          "forecast": 920.08,
+          "linear_trend": 920.08,
+          "lower_ci": 492.59,
+          "upper_ci": 1347.58
+        },
+        {
+          "year": 2025,
+          "forecast": 919.73,
+          "linear_trend": 919.73,
+          "lower_ci": 482.4,
+          "upper_ci": 1357.05
+        }
+      ]
+    },
+    "TELANGANA": {
+      "target_year": 2016,
+      "latest_historical_year": 2015,
+      "lpa": 953.37,
+      "predictions": {
+        "ensemble": 961.39,
+        "holt_exponential": 937.47,
+        "ridge_lag": 1001.24,
+        "linear_trend": 1022.37,
+        "sma_5": 942.8
+      },
+      "confidence_interval_95": {
+        "lower": 563.59,
+        "upper": 1359.18,
+        "margin": 397.8
+      },
+      "departure_from_lpa_pct": 0.84,
+      "imd_category": "Near Normal (Within \u00b110%)",
+      "multi_year_projections": [
+        {
+          "year": 2016,
+          "forecast": 968.7,
+          "linear_trend": 1022.37,
+          "lower_ci": 555.3,
+          "upper_ci": 1382.11
+        },
+        {
+          "year": 2017,
+          "forecast": 976.31,
+          "linear_trend": 1023.56,
+          "lower_ci": 547.87,
+          "upper_ci": 1404.75
+        },
+        {
+          "year": 2018,
+          "forecast": 984.2,
+          "linear_trend": 1024.75,
+          "lower_ci": 541.23,
+          "upper_ci": 1427.16
+        },
+        {
+          "year": 2019,
+          "forecast": 992.37,
+          "linear_trend": 1025.94,
+          "lower_ci": 535.34,
+          "upper_ci": 1449.4
+        },
+        {
+          "year": 2020,
+          "forecast": 1000.83,
+          "linear_trend": 1027.13,
+          "lower_ci": 530.15,
+          "upper_ci": 1471.51
+        },
+        {
+          "year": 2021,
+          "forecast": 1009.58,
+          "linear_trend": 1028.32,
+          "lower_ci": 525.64,
+          "upper_ci": 1493.51
+        },
+        {
+          "year": 2022,
+          "forecast": 1018.61,
+          "linear_trend": 1029.51,
+          "lower_ci": 521.76,
+          "upper_ci": 1515.45
+        },
+        {
+          "year": 2023,
+          "forecast": 1027.92,
+          "linear_trend": 1030.69,
+          "lower_ci": 518.5,
+          "upper_ci": 1537.35
+        },
+        {
+          "year": 2024,
+          "forecast": 1031.88,
+          "linear_trend": 1031.88,
+          "lower_ci": 510.18,
+          "upper_ci": 1553.59
+        },
+        {
+          "year": 2025,
+          "forecast": 1033.07,
+          "linear_trend": 1033.07,
+          "lower_ci": 499.38,
+          "upper_ci": 1566.77
+        }
+      ]
+    },
+    "UTTARAKHAND": {
+      "target_year": 2016,
+      "latest_historical_year": 2015,
+      "lpa": 1465.69,
+      "predictions": {
+        "ensemble": 1385.05,
+        "holt_exponential": 1369.08,
+        "ridge_lag": 1378.11,
+        "linear_trend": 1384.52,
+        "sma_5": 1411.78
+      },
+      "confidence_interval_95": {
+        "lower": 873.46,
+        "upper": 1896.64,
+        "margin": 511.59
+      },
+      "departure_from_lpa_pct": -5.5,
+      "imd_category": "Near Normal (Within \u00b110%)",
+      "multi_year_projections": [
+        {
+          "year": 2016,
+          "forecast": 1384.99,
+          "linear_trend": 1384.52,
+          "lower_ci": 853.33,
+          "upper_ci": 1916.65
+        },
+        {
+          "year": 2017,
+          "forecast": 1384.59,
+          "linear_trend": 1383.12,
+          "lower_ci": 833.59,
+          "upper_ci": 1935.59
+        },
+        {
+          "year": 2018,
+          "forecast": 1383.85,
+          "linear_trend": 1381.72,
+          "lower_ci": 814.17,
+          "upper_ci": 1953.54
+        },
+        {
+          "year": 2019,
+          "forecast": 1382.78,
+          "linear_trend": 1380.32,
+          "lower_ci": 795.01,
+          "upper_ci": 1970.55
+        },
+        {
+          "year": 2020,
+          "forecast": 1381.37,
+          "linear_trend": 1378.92,
+          "lower_ci": 776.05,
+          "upper_ci": 1986.7
+        },
+        {
+          "year": 2021,
+          "forecast": 1379.63,
+          "linear_trend": 1377.52,
+          "lower_ci": 757.25,
+          "upper_ci": 2002.01
+        },
+        {
+          "year": 2022,
+          "forecast": 1377.55,
+          "linear_trend": 1376.12,
+          "lower_ci": 738.58,
+          "upper_ci": 2016.53
+        },
+        {
+          "year": 2023,
+          "forecast": 1375.14,
+          "linear_trend": 1374.72,
+          "lower_ci": 719.98,
+          "upper_ci": 2030.29
+        },
+        {
+          "year": 2024,
+          "forecast": 1373.32,
+          "linear_trend": 1373.32,
+          "lower_ci": 702.38,
+          "upper_ci": 2044.27
+        },
+        {
+          "year": 2025,
+          "forecast": 1371.92,
+          "linear_trend": 1371.92,
+          "lower_ci": 685.55,
+          "upper_ci": 2058.29
+        }
+      ]
+    },
+    "VIDARBHA": {
+      "target_year": 2016,
+      "latest_historical_year": 2015,
+      "lpa": 1095.46,
+      "predictions": {
+        "ensemble": 1059.15,
+        "holt_exponential": 1078.97,
+        "ridge_lag": 1015.69,
+        "linear_trend": 1073.41,
+        "sma_5": 1086.74
+      },
+      "confidence_interval_95": {
+        "lower": 659.3,
+        "upper": 1459.01,
+        "margin": 399.86
+      },
+      "departure_from_lpa_pct": -3.31,
+      "imd_category": "Near Normal (Within \u00b110%)",
+      "multi_year_projections": [
+        {
+          "year": 2016,
+          "forecast": 1060.86,
+          "linear_trend": 1073.41,
+          "lower_ci": 645.32,
+          "upper_ci": 1476.41
+        },
+        {
+          "year": 2017,
+          "forecast": 1062.48,
+          "linear_trend": 1073.03,
+          "lower_ci": 631.82,
+          "upper_ci": 1493.14
+        },
+        {
+          "year": 2018,
+          "forecast": 1064.01,
+          "linear_trend": 1072.65,
+          "lower_ci": 618.75,
+          "upper_ci": 1509.27
+        },
+        {
+          "year": 2019,
+          "forecast": 1065.45,
+          "linear_trend": 1072.27,
+          "lower_ci": 606.05,
+          "upper_ci": 1524.85
+        },
+        {
+          "year": 2020,
+          "forecast": 1066.79,
+          "linear_trend": 1071.88,
+          "lower_ci": 593.67,
+          "upper_ci": 1539.91
+        },
+        {
+          "year": 2021,
+          "forecast": 1068.05,
+          "linear_trend": 1071.5,
+          "lower_ci": 581.6,
+          "upper_ci": 1554.49
+        },
+        {
+          "year": 2022,
+          "forecast": 1069.21,
+          "linear_trend": 1071.12,
+          "lower_ci": 569.79,
+          "upper_ci": 1568.63
+        },
+        {
+          "year": 2023,
+          "forecast": 1070.28,
+          "linear_trend": 1070.74,
+          "lower_ci": 558.21,
+          "upper_ci": 1582.35
+        },
+        {
+          "year": 2024,
+          "forecast": 1070.36,
+          "linear_trend": 1070.36,
+          "lower_ci": 545.96,
+          "upper_ci": 1594.77
+        },
+        {
+          "year": 2025,
+          "forecast": 1069.98,
+          "linear_trend": 1069.98,
+          "lower_ci": 533.52,
+          "upper_ci": 1606.45
+        }
+      ]
+    },
+    "WEST MADHYA PRADESH": {
+      "target_year": 2016,
+      "latest_historical_year": 2015,
+      "lpa": 941.52,
+      "predictions": {
+        "ensemble": 1010.78,
+        "holt_exponential": 1031.21,
+        "ridge_lag": 930.63,
+        "linear_trend": 967.78,
+        "sma_5": 1080.46
+      },
+      "confidence_interval_95": {
+        "lower": 648.22,
+        "upper": 1373.35,
+        "margin": 362.57
+      },
+      "departure_from_lpa_pct": 7.36,
+      "imd_category": "Near Normal (Within \u00b110%)",
+      "multi_year_projections": [
+        {
+          "year": 2016,
+          "forecast": 1005.62,
+          "linear_trend": 967.78,
+          "lower_ci": 628.83,
+          "upper_ci": 1382.41
+        },
+        {
+          "year": 2017,
+          "forecast": 1000.57,
+          "linear_trend": 968.23,
+          "lower_ci": 610.07,
+          "upper_ci": 1391.06
+        },
+        {
+          "year": 2018,
+          "forecast": 995.63,
+          "linear_trend": 968.68,
+          "lower_ci": 591.89,
+          "upper_ci": 1399.36
+        },
+        {
+          "year": 2019,
+          "forecast": 990.79,
+          "linear_trend": 969.13,
+          "lower_ci": 574.24,
+          "upper_ci": 1407.35
+        },
+        {
+          "year": 2020,
+          "forecast": 986.06,
+          "linear_trend": 969.59,
+          "lower_ci": 557.07,
+          "upper_ci": 1415.06
+        },
+        {
+          "year": 2021,
+          "forecast": 981.45,
+          "linear_trend": 970.04,
+          "lower_ci": 540.37,
+          "upper_ci": 1422.53
+        },
+        {
+          "year": 2022,
+          "forecast": 976.94,
+          "linear_trend": 970.49,
+          "lower_ci": 524.09,
+          "upper_ci": 1429.78
+        },
+        {
+          "year": 2023,
+          "forecast": 972.54,
+          "linear_trend": 970.94,
+          "lower_ci": 508.23,
+          "upper_ci": 1436.85
+        },
+        {
+          "year": 2024,
+          "forecast": 971.4,
+          "linear_trend": 971.4,
+          "lower_ci": 495.9,
+          "upper_ci": 1446.9
+        },
+        {
+          "year": 2025,
+          "forecast": 971.85,
+          "linear_trend": 971.85,
+          "lower_ci": 485.42,
+          "upper_ci": 1458.28
+        }
+      ]
+    },
+    "WEST RAJASTHAN": {
+      "target_year": 2016,
+      "latest_historical_year": 2015,
+      "lpa": 292.66,
+      "predictions": {
+        "ensemble": 345.31,
+        "holt_exponential": 382.81,
+        "ridge_lag": 278.69,
+        "linear_trend": 309.81,
+        "sma_5": 379.28
+      },
+      "confidence_interval_95": {
+        "lower": 131.9,
+        "upper": 558.72,
+        "margin": 213.41
+      },
+      "departure_from_lpa_pct": 17.99,
+      "imd_category": "Above Normal / Surplus",
+      "multi_year_projections": [
+        {
+          "year": 2016,
+          "forecast": 341.05,
+          "linear_trend": 309.81,
+          "lower_ci": 119.27,
+          "upper_ci": 562.83
+        },
+        {
+          "year": 2017,
+          "forecast": 336.86,
+          "linear_trend": 310.11,
+          "lower_ci": 107.01,
+          "upper_ci": 566.71
+        },
+        {
+          "year": 2018,
+          "forecast": 332.74,
+          "linear_trend": 310.4,
+          "lower_ci": 95.1,
+          "upper_ci": 570.39
+        },
+        {
+          "year": 2019,
+          "forecast": 328.7,
+          "linear_trend": 310.7,
+          "lower_ci": 83.51,
+          "upper_ci": 573.88
+        },
+        {
+          "year": 2020,
+          "forecast": 324.72,
+          "linear_trend": 310.99,
+          "lower_ci": 72.21,
+          "upper_ci": 577.23
+        },
+        {
+          "year": 2021,
+          "forecast": 320.82,
+          "linear_trend": 311.29,
+          "lower_ci": 61.19,
+          "upper_ci": 580.44
+        },
+        {
+          "year": 2022,
+          "forecast": 316.98,
+          "linear_trend": 311.58,
+          "lower_ci": 50.43,
+          "upper_ci": 583.53
+        },
+        {
+          "year": 2023,
+          "forecast": 313.22,
+          "linear_trend": 311.88,
+          "lower_ci": 39.92,
+          "upper_ci": 586.51
+        },
+        {
+          "year": 2024,
+          "forecast": 312.18,
+          "linear_trend": 312.18,
+          "lower_ci": 32.29,
+          "upper_ci": 592.06
+        },
+        {
+          "year": 2025,
+          "forecast": 312.47,
+          "linear_trend": 312.47,
+          "lower_ci": 26.15,
+          "upper_ci": 598.79
+        }
+      ]
+    },
+    "WEST UTTAR PRADESH": {
+      "target_year": 2016,
+      "latest_historical_year": 2015,
+      "lpa": 827.11,
+      "predictions": {
+        "ensemble": 674.41,
+        "holt_exponential": 608.72,
+        "ridge_lag": 774.88,
+        "linear_trend": 772.85,
+        "sma_5": 633.84
+      },
+      "confidence_interval_95": {
+        "lower": 306.18,
+        "upper": 1042.65,
+        "margin": 368.23
+      },
+      "departure_from_lpa_pct": -18.46,
+      "imd_category": "Deficient (Moderate Deficit)",
+      "multi_year_projections": [
+        {
+          "year": 2016,
+          "forecast": 686.23,
+          "linear_trend": 772.85,
+          "lower_ci": 303.55,
+          "upper_ci": 1068.91
+        },
+        {
+          "year": 2017,
+          "forecast": 697.81,
+          "linear_trend": 771.91,
+          "lower_ci": 301.21,
+          "upper_ci": 1094.41
+        },
+        {
+          "year": 2018,
+          "forecast": 709.18,
+          "linear_trend": 770.97,
+          "lower_ci": 299.13,
+          "upper_ci": 1119.22
+        },
+        {
+          "year": 2019,
+          "forecast": 720.31,
+          "linear_trend": 770.04,
+          "lower_ci": 297.24,
+          "upper_ci": 1143.38
+        },
+        {
+          "year": 2020,
+          "forecast": 731.23,
+          "linear_trend": 769.1,
+          "lower_ci": 295.53,
+          "upper_ci": 1166.93
+        },
+        {
+          "year": 2021,
+          "forecast": 741.92,
+          "linear_trend": 768.17,
+          "lower_ci": 293.94,
+          "upper_ci": 1189.89
+        },
+        {
+          "year": 2022,
+          "forecast": 752.38,
+          "linear_trend": 767.23,
+          "lower_ci": 292.46,
+          "upper_ci": 1212.31
+        },
+        {
+          "year": 2023,
+          "forecast": 762.62,
+          "linear_trend": 766.3,
+          "lower_ci": 291.05,
+          "upper_ci": 1234.19
+        },
+        {
+          "year": 2024,
+          "forecast": 765.36,
+          "linear_trend": 765.36,
+          "lower_ci": 282.43,
+          "upper_ci": 1248.3
+        },
+        {
+          "year": 2025,
+          "forecast": 764.43,
+          "linear_trend": 764.43,
+          "lower_ci": 270.39,
+          "upper_ci": 1258.46
+        }
+      ]
+    }
+  }
+}

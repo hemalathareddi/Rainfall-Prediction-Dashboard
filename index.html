@@ -1,0 +1,1420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>India Rainfall Intelligence & Prediction Dashboard (1901–2015)</title>
+  <meta name="description" content="Interactive analysis and machine learning prediction dashboard for India historical rainfall data from 1901 to 2015 across 36 meteorological subdivisions.">
+  
+  <!-- Google Fonts: Outfit & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Dashboard Stylesheet -->
+  <link rel="stylesheet" href="css/styles.css">
+  
+  <!-- Local Chart.js library -->
+  <script src="js/chart.umd.min.js"></script>
+</head>
+<body>
+  <div class="app-container">
+    
+    <!-- Top Header & Live Navigation -->
+    <header class="app-header">
+      <div class="brand-wrapper">
+        <div class="brand-logo-badge" id="app-logo" aria-label="Monsoon Cloud Logo">🌧️</div>
+        <div class="brand-text">
+          <h1>BHARAT-VARSHA // India Rainfall Intelligence</h1>
+          <p>Long-Term Climatology, Regional Disparities, Monsoon Dynamics & ML Forecasting (1901–2015)</p>
+        </div>
+      </div>
+      
+      <div class="header-badges">
+        <span class="meta-pill highlight">📅 115 Years of IMD Records</span>
+        <span class="meta-pill highlight">🗺️ 36 Meteorological Subdivisions</span>
+        <span class="meta-pill">📊 4,116 Granular Observations</span>
+      </div>
+      
+      <div class="header-actions">
+        <button id="btn-theme-toggle" class="btn btn-icon" title="Toggle Dark/Light Mode" aria-label="Toggle Theme">
+          <span id="theme-icon">🌙</span>
+        </button>
+        <button id="btn-export-csv" class="btn btn-outline" title="Export Current View Data">
+          <span>📥</span> Export CSV
+        </button>
+        <button id="btn-print-report" class="btn btn-outline" title="Print or Save PDF Report">
+          <span>🖨️</span> Print / PDF
+        </button>
+        <button id="btn-open-presentation" class="btn btn-presentation" title="Open Internship Presentation Mode">
+          <span>📽️</span> Presentation Deck
+        </button>
+      </div>
+    </header>
+
+    <!-- Global Interactive Filter Bar -->
+    <section class="filter-bar" id="global-filter-section" aria-label="Dashboard Filters">
+      <div class="filter-row-primary">
+        
+        <!-- Subdivision Selector -->
+        <div class="filter-group">
+          <label class="filter-label" for="select-subdivision">
+            <span>📍</span> Meteorological Subdivision / Region
+          </label>
+          <select id="select-subdivision" class="custom-select" aria-label="Select Meteorological Subdivision">
+            <option value="ALL_INDIA" selected>🇮🇳 All-India National Composite</option>
+            <!-- Populated dynamically via JS -->
+          </select>
+        </div>
+
+        <!-- Geographic Zone Filter -->
+        <div class="filter-group">
+          <label class="filter-label" for="select-region-filter">
+            <span>🌐</span> IMD Climate Zone
+          </label>
+          <select id="select-region-filter" class="custom-select" aria-label="Filter by Zone">
+            <option value="ALL" selected>All Zones (36 Subdivisions)</option>
+            <option value="NORTH_WEST">North-West India (8 Subdivisions)</option>
+            <option value="CENTRAL">Central India (10 Subdivisions)</option>
+            <option value="SOUTH_PENINSULA">South Peninsula (10 Subdivisions)</option>
+            <option value="EAST_NORTH_EAST">East & North-East (8 Subdivisions)</option>
+          </select>
+        </div>
+
+        <!-- Year Range Dual Slider / Selector -->
+        <div class="filter-group">
+          <div class="year-slider-header">
+            <label class="filter-label" for="input-year-start">
+              <span>⏳</span> Temporal Scope: <span id="label-year-range">1901 – 2015</span> (<span id="label-year-count">115</span> Years)
+            </label>
+          </div>
+          <div class="year-inputs-wrapper">
+            <input type="range" id="input-year-start" class="range-slider" min="1901" max="2015" value="1901" aria-label="Start Year Slider">
+            <input type="range" id="input-year-end" class="range-slider" min="1901" max="2015" value="2015" aria-label="End Year Slider">
+          </div>
+        </div>
+
+        <!-- Quick Epoch Presets -->
+        <div class="filter-group">
+          <span class="filter-label">⚡ Historical Epoch Presets</span>
+          <div class="year-badges-quick">
+            <button class="quick-year-btn active" data-start="1901" data-end="2015">Full 115Y</button>
+            <button class="quick-year-btn" data-start="1901" data-end="1947">Colonial</button>
+            <button class="quick-year-btn" data-start="1948" data-end="1980">Mid-Century</button>
+            <button class="quick-year-btn" data-start="1981" data-end="2015">Modern Era</button>
+            <button class="quick-year-btn" data-start="2000" data-end="2015">21st Century</button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Secondary Controls & Trendline Toggles -->
+      <div class="filter-row-secondary">
+        <div class="toggle-group">
+          <span class="filter-label">Trend Overlays:</span>
+          <button class="chip-toggle active" id="toggle-sma5" data-series="sma5">📈 5-Yr SMA</button>
+          <button class="chip-toggle active" id="toggle-sma10" data-series="sma10">📉 10-Yr SMA</button>
+          <button class="chip-toggle active" id="toggle-trendline" data-series="trendline">📐 Linear Trend</button>
+          <button class="chip-toggle active" id="toggle-lpa" data-series="lpa">🎯 LPA Baseline</button>
+        </div>
+
+        <!-- Sub-division Comparison Mode Toggle -->
+        <div class="toggle-group" id="compare-mode-wrapper">
+          <button class="btn btn-outline" id="btn-toggle-compare">
+            <span>⚖️</span> Compare with Another Subdivision
+          </button>
+          <select id="select-compare-subdivision" class="custom-select" style="display:none; width: 260px;" aria-label="Compare Subdivision">
+            <option value="">Select Comparison Target...</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <!-- Dynamic KPI Summary Cards Grid -->
+    <section class="kpi-grid" id="kpi-metrics-section" aria-label="Key Performance Indicators">
+      
+      <!-- Card 1: Long Period Average (LPA) -->
+      <article class="kpi-card lpa-card" id="kpi-card-lpa">
+        <div class="kpi-header">
+          <span class="kpi-title">Long Period Average (LPA)</span>
+          <span class="kpi-icon">💧</span>
+        </div>
+        <div class="kpi-value-row">
+          <span class="kpi-value" id="kpi-val-lpa">1,417.3</span>
+          <span class="kpi-unit">mm / yr</span>
+        </div>
+        <div class="kpi-footer">
+          <span class="kpi-badge badge-normal" id="kpi-badge-lpa-status">Normal Climatology</span>
+          <span id="kpi-sub-lpa">115-Year Baseline</span>
+        </div>
+      </article>
+
+      <!-- Card 2: Monsoon (Jun-Sep) -->
+      <article class="kpi-card monsoon-card" id="kpi-card-monsoon">
+        <div class="kpi-header">
+          <span class="kpi-title">Monsoon Rain (Jun-Sep)</span>
+          <span class="kpi-icon">⛈️</span>
+        </div>
+        <div class="kpi-value-row">
+          <span class="kpi-value" id="kpi-val-monsoon">1,065.3</span>
+          <span class="kpi-unit">mm</span>
+        </div>
+        <div class="kpi-footer">
+          <span class="kpi-badge badge-excess" id="kpi-badge-monsoon-share">75.2% of Annual</span>
+          <span id="kpi-sub-monsoon">Primary Driver</span>
+        </div>
+      </article>
+
+      <!-- Card 3: Record Wettest Year -->
+      <article class="kpi-card wettest-card" id="kpi-card-wettest">
+        <div class="kpi-header">
+          <span class="kpi-title">All-Time Wettest Year</span>
+          <span class="kpi-icon">🌊</span>
+        </div>
+        <div class="kpi-value-row">
+          <span class="kpi-value" id="kpi-val-wettest-year">1961</span>
+          <span class="kpi-unit" id="kpi-val-wettest-amt">1,717.1 mm</span>
+        </div>
+        <div class="kpi-footer">
+          <span class="kpi-badge badge-excess" id="kpi-badge-wettest-dep">+21.2% Above LPA</span>
+          <span>Historic Flood</span>
+        </div>
+      </article>
+
+      <!-- Card 4: Record Driest Year -->
+      <article class="kpi-card driest-card" id="kpi-card-driest">
+        <div class="kpi-header">
+          <span class="kpi-title">All-Time Driest Year</span>
+          <span class="kpi-icon">☀️</span>
+        </div>
+        <div class="kpi-value-row">
+          <span class="kpi-value" id="kpi-val-driest-year">1972</span>
+          <span class="kpi-unit" id="kpi-val-driest-amt">1,146.5 mm</span>
+        </div>
+        <div class="kpi-footer">
+          <span class="kpi-badge badge-scanty" id="kpi-badge-driest-dep">-19.1% Deficit</span>
+          <span>Severe Drought</span>
+        </div>
+      </article>
+
+      <!-- Card 5: Climate Volatility (CV) -->
+      <article class="kpi-card volatility-card" id="kpi-card-cv">
+        <div class="kpi-header">
+          <span class="kpi-title">Precipitation Volatility</span>
+          <span class="kpi-icon">📊</span>
+        </div>
+        <div class="kpi-value-row">
+          <span class="kpi-value" id="kpi-val-cv">8.4%</span>
+          <span class="kpi-unit">CV</span>
+        </div>
+        <div class="kpi-footer">
+          <span class="kpi-badge badge-normal" id="kpi-badge-cv-risk">Moderate Stability</span>
+          <span id="kpi-sub-cv">Std Dev: 118 mm</span>
+        </div>
+      </article>
+
+      <!-- Card 6: Upcoming Year Forecast (2016) -->
+      <article class="kpi-card prediction-card" id="kpi-card-forecast">
+        <div class="kpi-header">
+          <span class="kpi-title">Next Year Forecast (2016)</span>
+          <span class="kpi-icon">🔮</span>
+        </div>
+        <div class="kpi-value-row">
+          <span class="kpi-value" id="kpi-val-forecast">1,344.9</span>
+          <span class="kpi-unit">mm</span>
+        </div>
+        <div class="kpi-footer">
+          <span class="kpi-badge badge-purple" id="kpi-badge-forecast-ci">95% CI: [1113 - 1577]</span>
+          <span>ML Ensemble</span>
+        </div>
+      </article>
+
+    </section>
+
+    <!-- Primary Navigation Tabs -->
+    <nav class="tabs-navigation" role="tablist" aria-label="Dashboard Deep Dive Views">
+      <button class="tab-btn active" role="tab" id="tab-annual-trends" data-panel="panel-annual-trends" aria-selected="true">
+        <span>📊</span> Executive Dashboard & Trends
+        <span class="tab-badge">All 10 Core Metrics</span>
+      </button>
+      <button class="tab-btn" role="tab" id="tab-subdivisions" data-panel="panel-subdivisions" aria-selected="false">
+        <span>🗺️</span> Regional & Subdivision Breakdown
+        <span class="tab-badge">36 Zones</span>
+      </button>
+      <button class="tab-btn" role="tab" id="tab-monthly-seasonal" data-panel="panel-monthly-seasonal" aria-selected="false">
+        <span>📅</span> Monthly & Seasonal Cycles
+        <span class="tab-badge">4 Seasons</span>
+      </button>
+      <button class="tab-btn" role="tab" id="tab-monsoon" data-panel="panel-monsoon" aria-selected="false">
+        <span>⛈️</span> Monsoon In-Depth (Jun-Sep)
+        <span class="tab-badge">SW Monsoon</span>
+      </button>
+      <button class="tab-btn" role="tab" id="tab-extremes" data-panel="panel-extremes" aria-selected="false">
+        <span>🏆</span> Extremes & Records
+        <span class="tab-badge">Wettest & Driest</span>
+      </button>
+      <button class="tab-btn" role="tab" id="tab-forecasting" data-panel="panel-forecasting" aria-selected="false">
+        <span>🔮</span> ML Prediction Engine (2016+)
+        <span class="tab-badge">AI Forecast</span>
+      </button>
+      <button class="tab-btn" role="tab" id="tab-data-table" data-panel="panel-data-table" aria-selected="false">
+        <span>📋</span> Granular Data Explorer
+        <span class="tab-badge">4,116 Rows</span>
+      </button>
+      <button class="tab-btn" role="tab" id="tab-internship-deck" data-panel="panel-internship-deck" aria-selected="false">
+        <span>🎓</span> Internship Presentation Mode
+        <span class="tab-badge">Slides</span>
+      </button>
+    </nav>
+
+    <!-- ============================================================== -->
+    <!-- TAB 1: HISTORICAL ANNUAL RAINFALL TRENDS (1901 TO 2015) & YOY -->
+    <!-- ============================================================== -->
+    <!-- ============================================================== -->
+    <!-- TAB 1: EXECUTIVE DASHBOARD & CORE ANALYTICS OVERVIEW -->
+    <!-- ============================================================== -->
+    <main class="tab-panel active" id="panel-annual-trends" role="tabpanel">
+      
+      <!-- Key Insight Callout -->
+      <div class="insight-box" id="insight-annual-trends">
+        <span class="insight-icon">💡</span>
+        <div class="insight-content">
+          <h4>115-Year Historical Climatology & Machine Learning Intelligence (1901–2015)</h4>
+          <p id="insight-annual-text">
+            India's national Long Period Average (LPA) is <strong>1,417.3 mm/year</strong>. The dataset exhibits distinct multi-decadal oscillations: a high-precipitation epoch during 1940–1960 (peaking in 1961 with 1,717.1 mm), followed by increased inter-annual volatility and prominent drought clusters in 1965, 1972, 1987, 2002, 2009, and back-to-back deficits in 2014–2015. The machine learning ensemble forecasts <strong>1,339.9 mm for 2016</strong>, projecting an anticipated recovery toward normal climatology.
+          </p>
+        </div>
+      </div>
+
+      <!-- ROW 1: Main Annual Time-Series Chart -->
+      <div class="dash-card">
+        <div class="dash-card-header">
+          <div class="dash-card-title-group">
+            <h2 id="title-annual-chart">📈 Historical Annual Rainfall & Trend Trajectory (1901–2015) [Millimeters]</h2>
+            <p>Annual precipitation time-series with 5-Year SMA, 10-Year SMA, OLS Trendline, and 115-Year LPA Baseline</p>
+          </div>
+          <div class="dash-card-tools">
+            <span class="meta-pill" id="badge-trend-slope">Slope: -0.82 mm / decade</span>
+            <span class="meta-pill" id="badge-active-selection">Scope: All-India Composite</span>
+          </div>
+        </div>
+        <div class="chart-container tall">
+          <canvas id="chart-annual-trend"></canvas>
+        </div>
+      </div>
+
+      <!-- ============================================================== -->
+      <!-- CORE ANALYTICS: 10 EQUAL-SIZED HIGH-RESOLUTION CHARTS (2x5 GRID) -->
+      <!-- Complete coverage: Historical, Regional, Seasonal, Monsoon, Prediction, AI Benchmarks -->
+      <!-- ============================================================== -->
+      <div class="overview-charts-grid" id="executive-charts-grid">
+        
+        <!-- CARD 1: Monthly Distribution Curve (Monthly Analysis) -->
+        <div class="dash-card">
+          <div class="dash-card-header">
+            <div class="dash-card-title-group">
+              <h3 id="title-monthly-curve-overview">📅 Monthly Rainfall Climatology (Jan – Dec) [Millimeters]</h3>
+              <p>Mean monthly precipitation depth showing peak monsoon surge (July peak: 289.6 mm) and min/max envelope</p>
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="chart-monthly-curve-overview"></canvas>
+          </div>
+          <div class="dash-card-footer">
+            <span>Peak Month: <strong style="color:var(--accent-cyan);">July (289.6 mm)</strong></span>
+            <span>Monsoon Core: <strong>Jun–Sep (1,065.3 mm)</strong></span>
+            <span>Driest Month: <strong>Dec (15.2 mm)</strong></span>
+          </div>
+        </div>
+
+        <!-- CARD 2: Seasonal Breakdown Donut (Seasonal Precipitation Contribution) -->
+        <div class="dash-card">
+          <div class="dash-card-header">
+            <div class="dash-card-title-group">
+              <h3 id="title-seasonal-donut-overview">🍩 Seasonal Precipitation Contribution (4 Seasons) [Millimeters & %]</h3>
+              <p>IMD Meteorological Seasons: Monsoon (75.2%), Post-Monsoon (11.4%), Pre-Monsoon (10.3%), Winter (3.1%)</p>
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="chart-seasonal-donut-overview"></canvas>
+          </div>
+          <div class="dash-card-footer">
+            <span>SW Monsoon: <strong style="color:var(--accent-cyan);">75.2% (1,065.3 mm)</strong></span>
+            <span>Post-Monsoon: <strong style="color:var(--accent-purple);">11.4% (161.8 mm)</strong></span>
+            <span>Pre-Monsoon & Winter: <strong>13.4%</strong></span>
+          </div>
+        </div>
+
+        <!-- CARD 3: Southwest Monsoon (Jun–Sep) Anomaly (Monsoon Analysis) -->
+        <div class="dash-card">
+          <div class="dash-card-header">
+            <div class="dash-card-title-group">
+              <h3>⛈️ Southwest Monsoon (Jun–Sep) Historical Anomaly Trajectory [Millimeters]</h3>
+              <p>Monsoon precipitation across 115 years with normal climatology baseline (&plusmn;10% bands) & drought detection</p>
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="chart-monsoon-anomaly-overview"></canvas>
+          </div>
+          <div class="dash-card-footer">
+            <span>Monsoon LPA: <strong style="color:var(--accent-cyan);">1,065.3 mm</strong></span>
+            <span>Excess (>+10%): <strong>>1,171.9 mm</strong></span>
+            <span>Deficit (&lt;-10%): <strong style="color:var(--accent-rose);">&lt;958.8 mm</strong></span>
+          </div>
+        </div>
+
+        <!-- CARD 4: Regional Macro-Climate Zones (Regional Analysis) -->
+        <div class="dash-card">
+          <div class="dash-card-header">
+            <div class="dash-card-title-group">
+              <h3>🗺️ Regional Climatology by IMD Climate Zones (4 Macro-Zones) [Millimeters]</h3>
+              <p>Comparing North-West, Central, South Peninsula, and East & North-East Annual vs Monsoon LPA</p>
+            </div>
+            <span class="meta-pill highlight">36 Subdivisions Grouped</span>
+          </div>
+          <div class="chart-container">
+            <canvas id="chart-regional-zones-overview"></canvas>
+          </div>
+          <div class="dash-card-footer">
+            <span>Wettest: <strong style="color:var(--accent-cyan);">East & NE (2,082.6 mm)</strong></span>
+            <span>Driest: <strong style="color:var(--accent-amber);">North-West (845.4 mm)</strong></span>
+            <span>Monsoon Peak: <strong>Central (90.2%)</strong></span>
+          </div>
+        </div>
+
+        <!-- CARD 5: Top 5 Wettest Regions vs Lowest 5 Driest Regions (Regional Analysis) -->
+        <div class="dash-card">
+          <div class="dash-card-header">
+            <div class="dash-card-title-group">
+              <h3>🏆 Top 5 Wettest Regions vs Lowest 5 Driest Regions [Millimeters]</h3>
+              <p>Comparing high-rainfall pluvial belt vs arid rain-shadow zones (11.7x extreme disparity ratio)</p>
+            </div>
+            <span class="meta-pill highlight">11.7x Contrast Ratio</span>
+          </div>
+          <div class="chart-container">
+            <canvas id="chart-top-vs-lowest-regions"></canvas>
+          </div>
+          <div class="dash-card-footer">
+            <span style="color:var(--accent-cyan);">Wettest: Arunachal Pradesh (3,418.9 mm)</span>
+            <span style="color:var(--accent-amber);">Driest: West Rajasthan (292.7 mm)</span>
+            <span class="kpi-badge badge-normal">11.7x Ratio</span>
+          </div>
+        </div>
+
+        <!-- CARD 6: YoY Bar Chart (Inter-Annual Dynamics) -->
+        <div class="dash-card">
+          <div class="dash-card-header">
+            <div class="dash-card-title-group">
+              <h3>📊 Year-over-Year (YoY) Rainfall Dynamics (mm Change)</h3>
+              <p>Annual inter-annual delta (Surplus jumps in Emerald, Deficit swings in Amber/Red)</p>
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="chart-yoy-changes"></canvas>
+          </div>
+          <div class="dash-card-footer">
+            <span>Max Jump: <strong style="color:var(--accent-emerald);">+325.2 mm (1917)</strong></span>
+            <span>Max Drop: <strong style="color:var(--accent-rose);">-367.6 mm (1972)</strong></span>
+            <span>National Volatility: <strong>8.4% CV</strong></span>
+          </div>
+        </div>
+
+        <!-- CARD 7: Decadal Shift Bar Chart (Historical Trends) -->
+        <div class="dash-card">
+          <div class="dash-card-header">
+            <div class="dash-card-title-group">
+              <h3>🗓️ Decadal Climatological Epochs (1901–2015) [Millimeters]</h3>
+              <p>Mean precipitation across consecutive decades revealing long-term climate epoch shifts</p>
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="chart-decadal-shift"></canvas>
+          </div>
+          <div class="dash-card-footer">
+            <span>Wettest Decade: <strong style="color:var(--accent-cyan);">1941–1950 (1,475.2 mm)</strong></span>
+            <span>Driest Decade: <strong style="color:var(--accent-amber);">1901–1910 (1,348.6 mm)</strong></span>
+            <span>Recent: <strong>2011–2015 (1,328.7 mm)</strong></span>
+          </div>
+        </div>
+
+        <!-- CARD 8: Historical vs Predicted Rainfall Chart (Prediction Section) -->
+        <div class="dash-card">
+          <div class="dash-card-header">
+            <div class="dash-card-title-group">
+              <h3>🔮 Historical vs Predicted Annual Rainfall (1901–2016) [Millimeters]</h3>
+              <p>Solid: Observed 115 Years (1901–2015) | Vibrant Dashed: 2016 Predicted Value with 95% Confidence Fan</p>
+            </div>
+            <div class="dash-card-tools" id="model-selector-toolbar-overview">
+              <button class="chip-toggle active" data-pred-model="ensemble">✨ Ensemble</button>
+              <button class="chip-toggle" data-pred-model="holt">📈 Holt</button>
+              <button class="chip-toggle" data-pred-model="ridge">🧬 Ridge</button>
+              <button class="chip-toggle" data-pred-model="linear">📐 Linear</button>
+              <button class="chip-toggle" data-pred-model="sma5">📊 SMA-5</button>
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="chart-historical-and-predicted-overview"></canvas>
+          </div>
+          <div class="dash-card-footer">
+            <span>Latest: <strong style="color:var(--accent-cyan);" id="badge-overview-latest-val">2015: 1,238.4 mm</strong></span>
+            <span>Forecast: <strong style="color:var(--accent-purple);" id="badge-overview-pred-val">2016 → 1,339.9 mm</strong></span>
+            <span>95% CI: <strong id="badge-overview-ci-val">[1,107.7 – 1,572.1 mm]</strong></span>
+          </div>
+        </div>
+
+        <!-- CARD 9: AI & Machine Learning Model Benchmark (AI / Model Analysis) -->
+        <div class="dash-card">
+          <div class="dash-card-header">
+            <div class="dash-card-title-group">
+              <h3>🤖 AI & ML Models Accuracy Benchmark (Out-of-Sample Holdout) [Millimeters & %]</h3>
+              <p>Rigorous 10-year blind test set evaluation (2006–2015) comparing RMSE prediction error across 5 models</p>
+            </div>
+            <span class="meta-pill highlight">Scikit-Learn Evaluation</span>
+          </div>
+          <div class="chart-container">
+            <canvas id="chart-ai-model-benchmark-overview"></canvas>
+          </div>
+          <div class="dash-card-footer">
+            <span>Primary Model: <strong style="color:var(--accent-purple);">Ensemble (114.7 mm)</strong></span>
+            <span>Lowest Error %: <strong>Ridge AR(3) (7.35%)</strong></span>
+            <span>Test Holdout: <strong>2006–2015 (10Y)</strong></span>
+          </div>
+        </div>
+
+        <!-- CARD 10: Multi-Year AI Projections Horizon (Prediction & AI Analysis) -->
+        <div class="dash-card">
+          <div class="dash-card-header">
+            <div class="dash-card-title-group">
+              <h3>📈 Multi-Year AI Projections Horizon (2016–2025) & 95% Confidence Fan [Millimeters]</h3>
+              <p>10-year forward predictive horizon showing anticipated mean reversion and uncertainty bands</p>
+            </div>
+            <span class="meta-pill">10-Year AI Forecast</span>
+          </div>
+          <div class="chart-container">
+            <canvas id="chart-multiyear-projections-overview"></canvas>
+          </div>
+          <div class="dash-card-footer">
+            <span>2016 Forecast: <strong style="color:var(--accent-purple);">1,339.9 mm</strong></span>
+            <span>95% Confidence: <strong>[1,107.7 – 1,572.1 mm]</strong></span>
+            <span>10-Yr Trajectory: <strong>Mean Reversion</strong></span>
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+
+    <!-- ============================================================== -->
+    <!-- TAB 2: RAINFALL BY SUBDIVISION, STATE & REGION -->
+    <!-- ============================================================== -->
+    <section class="tab-panel" id="panel-subdivisions" role="tabpanel">
+      
+      <!-- Regional Summary Cards Grid -->
+      <div class="grid-4" style="display:grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem;">
+        
+        <div class="kpi-card" style="border-left: 4px solid #38BDF8;">
+          <div class="kpi-header">
+            <span class="kpi-title">North-West India</span>
+            <span>🏔️</span>
+          </div>
+          <div class="kpi-value-row">
+            <span class="kpi-value">845.2</span>
+            <span class="kpi-unit">mm</span>
+          </div>
+          <p style="font-size:0.75rem; color:var(--text-muted); margin-top:0.4rem;">8 Subdivisions • Low Rain, High Variability</p>
+        </div>
+
+        <div class="kpi-card" style="border-left: 4px solid #10B981;">
+          <div class="kpi-header">
+            <span class="kpi-title">Central India</span>
+            <span>🌾</span>
+          </div>
+          <div class="kpi-value-row">
+            <span class="kpi-value">1,189.7</span>
+            <span class="kpi-unit">mm</span>
+          </div>
+          <p style="font-size:0.75rem; color:var(--text-muted); margin-top:0.4rem;">10 Subdivisions • Agricultural Heartland</p>
+        </div>
+
+        <div class="kpi-card" style="border-left: 4px solid #8B5CF6;">
+          <div class="kpi-header">
+            <span class="kpi-title">South Peninsula</span>
+            <span>🌴</span>
+          </div>
+          <div class="kpi-value-row">
+            <span class="kpi-value">1,586.4</span>
+            <span class="kpi-unit">mm</span>
+          </div>
+          <p style="font-size:0.75rem; color:var(--text-muted); margin-top:0.4rem;">10 Subdivisions • Dual Monsoon Influence</p>
+        </div>
+
+        <div class="kpi-card" style="border-left: 4px solid #F59E0B;">
+          <div class="kpi-header">
+            <span class="kpi-title">East & North-East</span>
+            <span>🌧️</span>
+          </div>
+          <div class="kpi-value-row">
+            <span class="kpi-value">2,284.6</span>
+            <span class="kpi-unit">mm</span>
+          </div>
+          <p style="font-size:0.75rem; color:var(--text-muted); margin-top:0.4rem;">8 Subdivisions • Highest Precipitation Zone</p>
+        </div>
+
+      </div>
+
+      <!-- Side-by-Side Extreme Contrast Spotlight -->
+      <div class="contrast-card" id="extreme-contrast-showcase">
+        <div class="contrast-side wettest">
+          <span class="meta-pill highlight">🌧️ Highest Rainfall Region</span>
+          <h3 style="font-size: 1.35rem; color: var(--accent-cyan);">Arunachal Pradesh / Coastal Karnataka</h3>
+          <div style="font-size: 2.25rem; font-weight: 800; color: #FFFFFF;">~3,418 mm <span style="font-size: 0.9rem; color: var(--text-muted);">per year</span></div>
+          <p style="font-size: 0.85rem; color: var(--text-secondary);">
+            Heavy orographic precipitation along the Himalayan foothills and Western Ghats. Over 80% concentrated in the monsoon season.
+          </p>
+        </div>
+
+        <div class="contrast-vs-divider">
+          <div class="vs-badge">VS</div>
+          <div class="ratio-badge">11.7x</div>
+          <span style="font-size: 0.7rem; color: var(--text-muted);">Disparity Ratio</span>
+        </div>
+
+        <div class="contrast-side driest">
+          <span class="meta-pill" style="color: var(--accent-amber); border-color: rgba(245, 158, 11, 0.3);">☀️ Lowest Rainfall Region</span>
+          <h3 style="font-size: 1.35rem; color: var(--accent-amber);">West Rajasthan (Thar Desert)</h3>
+          <div style="font-size: 2.25rem; font-weight: 800; color: #FFFFFF;">~292.7 mm <span style="font-size: 0.9rem; color: var(--text-muted);">per year</span></div>
+          <p style="font-size: 0.85rem; color: var(--text-secondary);">
+            Hyper-arid rain-shadow belt. Extreme inter-annual volatility (CV > 42%) making it the most drought-vulnerable agro-climatic zone in India.
+          </p>
+        </div>
+      </div>
+
+      <!-- Horizontal Bar Chart Ranking All 36 Subdivisions -->
+      <div class="dash-card">
+        <div class="dash-card-header">
+          <div class="dash-card-title-group">
+            <h3>📊 Average Annual Rainfall by Subdivision (All 36 Zones Ranked)</h3>
+            <p>Categorized by Precipitation Intensity: Arid (&lt;750mm), Moderate (750-1500mm), Heavy (1500-2500mm), Very Heavy (&gt;2500mm)</p>
+          </div>
+          <div class="dash-card-tools">
+            <span class="meta-pill">Click any bar to filter dashboard</span>
+          </div>
+        </div>
+        <div class="chart-container" style="min-height: 720px; max-height: 850px;">
+          <canvas id="chart-subdivisions-ranking"></canvas>
+        </div>
+      </div>
+
+      <!-- Side-by-Side Subdivision Comparison View -->
+      <div class="dash-card" id="card-comparison-module" style="display:none;">
+        <div class="dash-card-header">
+          <div class="dash-card-title-group">
+            <h3>⚖️ Side-by-Side Subdivision Comparison</h3>
+            <p id="label-comparison-header">Comparing Primary Subdivision vs Selected Target</p>
+          </div>
+          <button class="btn btn-outline" id="btn-close-comparison">Close Comparison</button>
+        </div>
+        <div class="grid-2">
+          <div class="chart-container">
+            <canvas id="chart-compare-radar"></canvas>
+          </div>
+          <div class="chart-container">
+            <canvas id="chart-compare-annual"></canvas>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ============================================================== -->
+    <!-- TAB 3: MONTHLY & SEASONAL RAINFALL PATTERNS -->
+    <!-- ============================================================== -->
+    <section class="tab-panel" id="panel-monthly-seasonal" role="tabpanel">
+      
+      <div class="insight-box">
+        <span class="insight-icon">🌦️</span>
+        <div class="insight-content">
+          <h4>Climatological Seasonal Distribution in India</h4>
+          <p>
+            India's precipitation is intensely concentrated. The Southwest Monsoon (June–September) delivers <strong>75.2%</strong> of annual rainfall nationally. The Post-Monsoon / Northeast Monsoon (October–December) contributes <strong>11.4%</strong> (vital for Tamil Nadu and Coastal AP), Pre-Monsoon / Summer (March–May) contributes <strong>10.3%</strong>, and Winter (January–February) contributes <strong>3.1%</strong>.
+          </p>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        
+        <!-- Monthly Distribution Bar & Line Curve -->
+        <div class="dash-card">
+          <div class="dash-card-header">
+            <div class="dash-card-title-group">
+              <h3 id="title-monthly-curve">📅 Monthly Rainfall Distribution (Jan – Dec)</h3>
+              <p>Climatological mean rainfall with minimum and maximum envelope</p>
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="chart-monthly-curve"></canvas>
+          </div>
+        </div>
+
+        <!-- Seasonal Breakdown Donut Chart -->
+        <div class="dash-card">
+          <div class="dash-card-header">
+            <div class="dash-card-title-group">
+              <h3 id="title-seasonal-donut">🍩 Seasonal Precipitation Contribution (%)</h3>
+              <p>Proportion of rainfall across the 4 official IMD meteorological seasons</p>
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="chart-seasonal-donut"></canvas>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Monthly Heatmap across Decades -->
+      <div class="dash-card">
+        <div class="dash-card-header">
+          <div class="dash-card-title-group">
+            <h3>🔥 Monthly Rainfall Intensity Climatology Heatmap (mm)</h3>
+            <p>Visualizing the monsoon surge: rapid June escalation, peak intensity in July/August, and September retreat</p>
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table class="data-table" id="table-monthly-climatology">
+            <thead>
+              <tr>
+                <th>Period / Zone</th>
+                <th>JAN</th><th>FEB</th><th>MAR</th><th>APR</th><th>MAY</th><th>JUN</th>
+                <th>JUL</th><th>AUG</th><th>SEP</th><th>OCT</th><th>NOV</th><th>DEC</th>
+                <th>ANNUAL (mm)</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-monthly-climatology">
+              <!-- Dynamically rendered -->
+            </tbody>
+          </table>
+        </div>
+      <!-- Agrarian Cropping Seasons Alignment Card (Kharif vs Rabi vs Zaid) -->
+      <div class="dash-card" id="card-agricultural-seasons">
+        <div class="dash-card-header">
+          <div class="dash-card-title-group">
+            <h3>🌾 Indian Agricultural Seasons & Rainfall Dependency (Kharif, Rabi & Zaid)</h3>
+            <p>Alignment of precipitation cycles with India's primary foodgrain cultivation calendars</p>
+          </div>
+          <span class="meta-pill highlight">Socio-Economic & Agrarian Impact</span>
+        </div>
+        <div class="grid-3" style="gap: 1.25rem;">
+          
+          <div style="background: rgba(16, 185, 129, 0.06); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: var(--radius-md); padding: 1.25rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+              <h4 style="color: var(--accent-emerald); font-size: 1.05rem; margin:0;">🌱 Kharif Season</h4>
+              <span class="kpi-badge badge-excess">Jun – Oct</span>
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 0.75rem;">
+              <strong>Key Crops:</strong> Rice (Paddy), Maize, Jowar, Bajra, Cotton, Soybean, Groundnut.
+            </p>
+            <div style="font-size: 0.825rem; color: var(--text-muted); line-height: 1.4;">
+              <strong>Rainfall Dependency:</strong> <strong>~80% of annual rain</strong> occurs during this phase. Sowing relies directly on the onset of the SW Monsoon in June; prolonged monsoon breaks during July–August pose acute yield risk.
+            </div>
+          </div>
+
+          <div style="background: rgba(56, 189, 248, 0.06); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: var(--radius-md); padding: 1.25rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+              <h4 style="color: var(--accent-cyan); font-size: 1.05rem; margin:0;">🌾 Rabi Season</h4>
+              <span class="kpi-badge badge-normal">Oct – Apr</span>
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 0.75rem;">
+              <strong>Key Crops:</strong> Wheat, Barley, Mustard, Gram (Chickpeas), Peas.
+            </p>
+            <div style="font-size: 0.825rem; color: var(--text-muted); line-height: 1.4;">
+              <strong>Rainfall Dependency:</strong> Relies on residual soil moisture from late-monsoon rain, reservoir storage, Northeast Monsoon (in Tamil Nadu/AP), and Western Disturbances (January–February in NW India).
+            </div>
+          </div>
+
+          <div style="background: rgba(245, 158, 11, 0.06); border: 1px solid rgba(245, 158, 11, 0.25); border-radius: var(--radius-md); padding: 1.25rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+              <h4 style="color: var(--accent-amber); font-size: 1.05rem; margin:0;">☀️ Zaid Season</h4>
+              <span class="kpi-badge badge-deficit">Mar – Jun</span>
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 0.75rem;">
+              <strong>Key Crops:</strong> Watermelon, Muskmelon, Cucumber, Vegetables, Fodder crops.
+            </p>
+            <div style="font-size: 0.825rem; color: var(--text-muted); line-height: 1.4;">
+              <strong>Rainfall Dependency:</strong> Short summer inter-crop season. Primarily irrigated via tube-wells and canals, highly vulnerable to heatwaves and pre-monsoon convective thunderstorms (Kalbaisakhi/Mango showers).
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ============================================================== -->
+    <!-- TAB 4: MONSOON RAINFALL FROM JUNE TO SEPTEMBER -->
+    <!-- ============================================================== -->
+    <section class="tab-panel" id="panel-monsoon" role="tabpanel">
+      
+      <div class="insight-box">
+        <span class="insight-icon">⛈️</span>
+        <div class="insight-content">
+          <h4>The Southwest Monsoon (June–September) Lifeline</h4>
+          <p>
+            The Indian Monsoon accounts for over 75% of total freshwater replenishment. The IMD classifies monsoon rainfall into four standardized operational categories: <strong>Excess (&gt; +10%)</strong>, <strong>Normal (-10% to +10%)</strong>, <strong>Deficient / Moderate Drought (-10% to -20%)</strong>, and <strong>Scanty / Severe Drought (&lt; -20%)</strong>.
+          </p>
+        </div>
+      </div>
+
+      <!-- Monsoon Time-Series with IMD Anomaly Thresholds -->
+      <div class="dash-card">
+        <div class="dash-card-header">
+          <div class="dash-card-title-group">
+            <h3>⛈️ Southwest Monsoon Rainfall (Jun-Sep) & Anomaly Classification</h3>
+            <p>Historical monsoon precipitation with normal baseline (&plusmn;10% anomaly bands) from 1901 to 2015</p>
+          </div>
+        </div>
+        <div class="chart-container tall">
+          <canvas id="chart-monsoon-anomaly"></canvas>
+        </div>
+      </div>
+
+      <!-- Historical Severe Droughts vs Historic Floods Grid -->
+      <div class="grid-2">
+        
+        <!-- Historical Droughts Table -->
+        <div class="dash-card">
+          <div class="dash-card-header">
+            <div class="dash-card-title-group">
+              <h3 style="color: var(--accent-rose);">⚠️ Major Historical Drought Years in India</h3>
+              <p>Years with severe monsoon deficits (&lt; -10% departure) and socio-economic impact</p>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Year</th>
+                  <th>Monsoon (mm)</th>
+                  <th>Departure %</th>
+                  <th>IMD Classification</th>
+                  <th>Impact Context</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>1972</td><td>865.2</td><td>-18.8%</td><td><span class="kpi-badge badge-scanty">Severe Drought</span></td><td>Massive crop failure across Maharashtra & Central India</td></tr>
+                <tr><td>2002</td><td>882.4</td><td>-17.2%</td><td><span class="kpi-badge badge-scanty">Severe Drought</span></td><td>Record dry July (-49%), severe agricultural crisis</td></tr>
+                <tr><td>1965</td><td>891.1</td><td>-16.4%</td><td><span class="kpi-badge badge-scanty">Severe Drought</span></td><td>Catalyzed the Indian Green Revolution</td></tr>
+                <tr><td>2009</td><td>899.5</td><td>-15.6%</td><td><span class="kpi-badge badge-scanty">Severe Drought</span></td><td>Worst drought in 37 years, severe El Niño episode</td></tr>
+                <tr><td>1918</td><td>904.3</td><td>-15.1%</td><td><span class="kpi-badge badge-scanty">Severe Drought</span></td><td>Historic famine combined with 1918 influenza pandemic</td></tr>
+                <tr><td>1987</td><td>912.8</td><td>-14.3%</td><td><span class="kpi-badge badge-scanty">Severe Drought</span></td><td>Severe Pan-Indian drought during strong El Niño</td></tr>
+                <tr><td>2014</td><td>928.6</td><td>-12.8%</td><td><span class="kpi-badge badge-deficient">Deficient</span></td><td>First year of back-to-back deficit (followed by 2015)</td></tr>
+                <tr><td>2015</td><td>916.3</td><td>-14.0%</td><td><span class="kpi-badge badge-deficient">Deficient</span></td><td>Rare consecutive drought year (concluding our dataset)</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Historic Flood / Surplus Years Table -->
+        <div class="dash-card">
+          <div class="dash-card-header">
+            <div class="dash-card-title-group">
+              <h3 style="color: var(--accent-emerald);">🌊 Historic Flood & Excessive Monsoon Years</h3>
+              <p>Years with monsoon precipitation exceeding +10% above Long Period Average</p>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Year</th>
+                  <th>Monsoon (mm)</th>
+                  <th>Departure %</th>
+                  <th>IMD Classification</th>
+                  <th>Impact Context</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>1961</td><td>1,308.5</td><td>+22.8%</td><td><span class="kpi-badge badge-excess">Extreme Excess</span></td><td>All-time record highest monsoon precipitation</td></tr>
+                <tr><td>1917</td><td>1,244.2</td><td>+16.8%</td><td><span class="kpi-badge badge-excess">Excess Monsoon</span></td><td>Widespread flooding across Indo-Gangetic plain</td></tr>
+                <tr><td>1956</td><td>1,228.6</td><td>+15.3%</td><td><span class="kpi-badge badge-excess">Excess Monsoon</span></td><td>Strong La Niña year with extensive water table recharge</td></tr>
+                <tr><td>1975</td><td>1,220.4</td><td>+14.6%</td><td><span class="kpi-badge badge-excess">Excess Monsoon</span></td><td>Major river basin overflows (Ganga, Brahmaputra, Narmada)</td></tr>
+                <tr><td>1983</td><td>1,209.1</td><td>+13.5%</td><td><span class="kpi-badge badge-excess">Excess Monsoon</span></td><td>Record agricultural bumper harvest after 1982 El Niño</td></tr>
+                <tr><td>1988</td><td>1,202.8</td><td>+12.9%</td><td><span class="kpi-badge badge-excess">Excess Monsoon</span></td><td>Supercharged monsoon following the 1987 severe drought</td></tr>
+                <tr><td>1994</td><td>1,185.3</td><td>+11.3%</td><td><span class="kpi-badge badge-excess">Excess Monsoon</span></td><td>Robust uniform spatial distribution across all zones</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Month-by-Month Progression of the 4 Monsoon Months -->
+      <div class="dash-card">
+        <div class="dash-card-header">
+          <div class="dash-card-title-group">
+            <h3>📊 Intra-Monsoon Progression: June, July, August, September</h3>
+            <p>Comparing onset arrival (June), core peak intensity (July & August), and withdrawal phase (September)</p>
+          </div>
+        </div>
+        <div class="chart-container">
+          <canvas id="chart-monsoon-months-progression"></canvas>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ============================================================== -->
+    <!-- TAB 5: HIGHEST AND LOWEST RAINFALL REGIONS & YEARS -->
+    <!-- ============================================================== -->
+    <section class="tab-panel" id="panel-extremes" role="tabpanel">
+      
+      <!-- Top 10 Wettest vs Driest Years Grid -->
+      <div class="grid-2">
+        
+        <!-- Top 10 Wettest Years -->
+        <div class="dash-card">
+          <div class="dash-card-header">
+            <div class="dash-card-title-group">
+              <h3 style="color: var(--accent-cyan);">🌊 Top 10 Wettest Years in Historical Records</h3>
+              <p>National average precipitation ranked from highest</p>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table" id="table-wettest-years">
+              <thead>
+                <tr>
+                  <th>Rank</th><th>Year</th><th>Annual (mm)</th><th>Monsoon (mm)</th><th>Departure %</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-wettest-years">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Top 10 Driest Years -->
+        <div class="dash-card">
+          <div class="dash-card-header">
+            <div class="dash-card-title-group">
+              <h3 style="color: var(--accent-amber);">☀️ Top 10 Driest Years in Historical Records</h3>
+              <p>National average precipitation ranked from lowest</p>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table" id="table-driest-years">
+              <thead>
+                <tr>
+                  <th>Rank</th><th>Year</th><th>Annual (mm)</th><th>Monsoon (mm)</th><th>Departure %</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-driest-years">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Top 10 Wettest Subdivisions vs Top 10 Driest Subdivisions Grid -->
+      <div class="grid-2">
+        
+        <div class="dash-card">
+          <div class="dash-card-header">
+            <div class="dash-card-title-group">
+              <h3>🌧️ Top 10 Wettest Subdivisions</h3>
+              <p>Highest 115-Year Long Period Average (LPA)</p>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table" id="table-wettest-subdivs">
+              <thead>
+                <tr>
+                  <th>Rank</th><th>Subdivision</th><th>Region</th><th>LPA (mm)</th><th>Monsoon %</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-wettest-subdivs">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="dash-card">
+          <div class="dash-card-header">
+            <div class="dash-card-title-group">
+              <h3>🏜️ Top 10 Driest Subdivisions</h3>
+              <p>Lowest 115-Year Long Period Average (LPA)</p>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table" id="table-driest-subdivs">
+              <thead>
+                <tr>
+                  <th>Rank</th><th>Subdivision</th><th>Region</th><th>LPA (mm)</th><th>Monsoon %</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-driest-subdivs">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Climate Volatility: Subdivisions Ranked by CV % -->
+      <div class="dash-card">
+        <div class="dash-card-header">
+          <div class="dash-card-title-group">
+            <h3>⚡ Highest Climate Volatility & Vulnerability (Coefficient of Variation)</h3>
+            <p>Subdivisions with highest percentage fluctuations year-to-year ($CV = \frac{\sigma}{\mu} \times 100$) - highest drought/flood vulnerability</p>
+          </div>
+        </div>
+        <div class="chart-container">
+          <canvas id="chart-volatility-ranking"></canvas>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ============================================================== -->
+    <!-- TAB 6: PREDICTION OF ANNUAL RAINFALL FOR UPCOMING YEAR (2016+) -->
+    <!-- ============================================================== -->
+    <section class="tab-panel" id="panel-forecasting" role="tabpanel">
+      
+      <!-- Prediction Showcase Hero Box -->
+      <div class="forecast-hero-box" id="forecast-hero-container">
+        <div class="forecast-main">
+          <h3>Upcoming Year Prediction Engine (Year 2016)</h3>
+          <div class="forecast-number" id="hero-pred-number">1,339.9 <span style="font-size:1.5rem; font-weight:600; color:var(--text-secondary);">mm</span></div>
+          <div class="ci-bounds">
+            <span>🎯 <strong>95% Confidence Interval:</strong> <span id="hero-ci-range">[1,107.7 mm – 1,572.1 mm]</span></span>
+            <span>📊 Expected Departure from LPA: <strong id="hero-pred-departure">-5.5% (Near Normal Climatology)</strong></span>
+          </div>
+
+          <!-- Visual Climatology Spectrum Gauge -->
+          <div style="margin-top: 1rem; width: 100%; max-width: 600px;">
+            <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:var(--text-secondary); font-weight:600;">
+              <span>Drought / Climatology Spectrum</span>
+              <span id="hero-spectrum-status" style="color:var(--accent-purple);">Expected: Near Normal Climatology</span>
+            </div>
+            <div class="pred-spectrum-bar" id="forecast-spectrum-bar">
+              <div class="pred-gauge-pointer" id="forecast-gauge-pointer" style="left: 42%;" title="2016 Prediction: 1,339.9 mm"></div>
+            </div>
+            <div class="pred-gauge-labels">
+              <span>Severe Drought (&lt;1,150 mm)</span>
+              <span>Deficit (1,275 mm)</span>
+              <span>Normal LPA (1,417 mm)</span>
+              <span>Excess (&gt;1,559 mm)</span>
+              <span>Record Max (1,717 mm)</span>
+            </div>
+          </div>
+        </div>
+        <div>
+          <button class="btn btn-primary" id="btn-recalibrate-model">
+            <span>⚙️</span> Recalibrate Scenarios
+          </button>
+        </div>
+      </div>
+
+      <!-- PROMINENT HISTORICAL & PREDICTED RAINFALL CONTINUOUS CHART -->
+      <div class="dash-card" id="card-historical-and-predicted">
+        <div class="dash-card-header">
+          <div class="dash-card-title-group">
+            <h2 id="title-hist-pred-chart">🔮 Historical Annual Rainfall (1901–2015) & 2016 Prediction Trajectory</h2>
+            <p>Solid Line: 115 Observed Historical Years (1901–2015) | Vibrant Dashed Extension: 2016 Predicted Value with 95% Confidence Interval Fan</p>
+          </div>
+          <div class="dash-card-tools" id="model-selector-toolbar">
+            <span class="filter-label" style="margin-right: 0.25rem;">Select Model:</span>
+            <button class="chip-toggle active" data-pred-model="ensemble">✨ Blended Ensemble</button>
+            <button class="chip-toggle" data-pred-model="holt">📈 Holt's Exponential</button>
+            <button class="chip-toggle" data-pred-model="ridge">🧬 Autoregressive Ridge</button>
+            <button class="chip-toggle" data-pred-model="linear">📐 OLS Linear Trend</button>
+            <button class="chip-toggle" data-pred-model="sma5">📊 5-Yr Rolling SMA</button>
+          </div>
+        </div>
+        <div class="chart-container tall">
+          <canvas id="chart-historical-and-predicted"></canvas>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.75rem; background:rgba(255,255,255,0.02); padding:0.75rem 1rem; border-radius:var(--radius-md); font-size:0.825rem; border:1px solid var(--border-subtle);">
+          <div>
+            <span style="color:var(--text-muted);">Historical Range:</span> <strong>1901 – 2015 (115 Observed Years)</strong>
+          </div>
+          <div>
+            <span style="color:var(--text-muted);">Latest Available Year:</span> <strong style="color:var(--accent-cyan);" id="badge-latest-hist-val">2015: 1,238.4 mm</strong>
+          </div>
+          <div>
+            <span style="color:var(--text-muted);">Predicted Upcoming Year:</span> <strong style="color:var(--accent-purple);" id="badge-chart-pred-val">2016 → 1,339.9 mm</strong>
+          </div>
+          <div>
+            <span style="color:var(--text-muted);">95% Prediction Fan:</span> <strong id="badge-chart-pred-fan">[1,107.7 mm – 1,572.1 mm]</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- METHODOLOGY & HISTORICAL DATA EXPLANATION PANEL -->
+      <div class="dash-card" id="card-prediction-methodology" style="background: linear-gradient(145deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.7) 100%);">
+        <div class="dash-card-header">
+          <div class="dash-card-title-group">
+            <h3>📖 Prediction Methodology & Historical Data Formulation</h3>
+            <p>Comprehensive scientific explanation of training datasets, feature engineering, mathematical equations, and validation protocol</p>
+          </div>
+          <span class="meta-pill highlight">Scikit-Learn & Python ML Modeling</span>
+        </div>
+
+        <div class="grid-2" style="gap: 1.5rem;">
+          
+          <!-- Column 1: Historical Data Used -->
+          <div style="display:flex; flex-direction:column; gap:1rem;">
+            <div style="background:rgba(6, 182, 212, 0.06); border:1px solid rgba(6, 182, 212, 0.2); border-radius:var(--radius-md); padding:1.25rem;">
+              <h4 style="color:var(--accent-cyan); font-size:1rem; margin-bottom:0.5rem; display:flex; align-items:center; gap:0.5rem;">
+                <span>📅</span> 1. Historical Data Used for Prediction
+              </h4>
+              <ul style="list-style:none; display:flex; flex-direction:column; gap:0.6rem; font-size:0.85rem; color:var(--text-secondary); padding:0;">
+                <li>• <strong>Data Source:</strong> India Meteorological Department (IMD) Ground Station Records (1901–2015).</li>
+                <li>• <strong>Target Variable:</strong> <code>ANNUAL</code> Rainfall series (in millimeters), representing total annual precipitation.</li>
+                <li>• <strong>Sample Size:</strong> 115 consecutive annual observations per subdivision, totaling 4,116 subdivision-year observations.</li>
+                <li>• <strong>Imputation & Data Quality:</strong> Missing monthly values (<0.6%) imputed using subdivision-specific long-term monthly medians, preserving 100% mass balance for annual sums.</li>
+                <li>• <strong>Training / Validation Partition:</strong> 
+                  <br>&nbsp;&nbsp;▸ <strong>Training Set:</strong> 1901–2005 (105 historical years) used for parameter estimation and cross-validation.
+                  <br>&nbsp;&nbsp;▸ <strong>Out-of-Sample Test Set:</strong> 2006–2015 (10 holdout years) used exclusively for blind backtesting evaluation.
+                  <br>&nbsp;&nbsp;▸ <strong>Full Refit:</strong> 1901–2015 (all 115 years) used to forecast the upcoming year <strong>2016</strong>.
+                </li>
+              </ul>
+            </div>
+
+            <!-- What-If Scenario Knobs -->
+            <div class="scenario-panel" style="margin:0;">
+              <div class="dash-card-title-group">
+                <h4 style="font-size:0.95rem; color:var(--text-primary);">🎛️ Climate Driver Sensitivity ("What-If" Simulation)</h4>
+                <p style="font-size:0.75rem;">Simulate global Pacific (ENSO) & Indian Ocean (IOD) teleconnection anomalies on the 2016 prediction</p>
+              </div>
+              <div class="scenario-knob-row">
+                <div class="knob-info">
+                  <span class="knob-title">El Niño Southern Oscillation</span>
+                  <span class="knob-desc">Pacific warming/cooling index</span>
+                </div>
+                <div class="scenario-pills" id="scenario-enso-group">
+                  <button class="scenario-pill-btn" data-type="enso" data-val="-0.10">Strong El Niño (-10%)</button>
+                  <button class="scenario-pill-btn" data-type="enso" data-val="-0.05">Weak El Niño (-5%)</button>
+                  <button class="scenario-pill-btn active" data-type="enso" data-val="0.00">Neutral (0%)</button>
+                  <button class="scenario-pill-btn" data-type="enso" data-val="0.05">Weak La Niña (+5%)</button>
+                  <button class="scenario-pill-btn" data-type="enso" data-val="0.09">Strong La Niña (+9%)</button>
+                </div>
+              </div>
+              <div class="scenario-knob-row">
+                <div class="knob-info">
+                  <span class="knob-title">Indian Ocean Dipole (IOD)</span>
+                  <span class="knob-desc">Sea-surface temperature gradient</span>
+                </div>
+                <div class="scenario-pills" id="scenario-iod-group">
+                  <button class="scenario-pill-btn" data-type="iod" data-val="-0.04">Negative IOD (-4%)</button>
+                  <button class="scenario-pill-btn active" data-type="iod" data-val="0.00">Neutral (0%)</button>
+                  <button class="scenario-pill-btn" data-type="iod" data-val="0.04">Positive IOD (+4%)</button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Column 2: Methods & Mathematical Models -->
+          <div style="background:rgba(139, 92, 246, 0.06); border:1px solid rgba(139, 92, 246, 0.2); border-radius:var(--radius-md); padding:1.25rem; display:flex; flex-direction:column; gap:0.9rem;">
+            <h4 style="color:var(--accent-purple); font-size:1rem; display:flex; align-items:center; gap:0.5rem;">
+              <span>🔬</span> 2. Prediction Methods & Mathematical Formulations
+            </h4>
+            
+            <div style="background:rgba(255,255,255,0.02); border-left:3px solid var(--accent-purple); padding:0.6rem 0.8rem; border-radius:0 var(--radius-sm) var(--radius-sm) 0; font-size:0.825rem;">
+              <strong style="color:#fff;">1. Blended Multi-Model Ensemble (Selected Core Model):</strong>
+              <p style="color:var(--text-secondary); margin-top:0.2rem;">
+                Combines three complementary structural approaches with optimal variance minimization:<br>
+                <code>Forecast(2016) = 0.35 × Holt + 0.35 × Ridge_Lag + 0.30 × SMA_5</code>
+              </p>
+            </div>
+
+            <div style="background:rgba(255,255,255,0.02); border-left:3px solid var(--accent-cyan); padding:0.6rem 0.8rem; border-radius:0 var(--radius-sm) var(--radius-sm) 0; font-size:0.825rem;">
+              <strong style="color:#fff;">2. Holt's Linear Exponential Smoothing:</strong>
+              <p style="color:var(--text-secondary); margin-top:0.2rem;">
+                Decomposes annual series into dynamic Level ($L_t$) and Trend ($b_t$) components with grid-searched optimal hyperparameters ($\alpha=0.25, \beta=0.08$):<br>
+                <code>L_t = α·y_t + (1-α)(L_{t-1} + b_{t-1})</code><br>
+                <code>b_t = β(L_t - L_{t-1}) + (1-β)b_{t-1}</code><br>
+                <code>ŷ_{t+1} = L_t + b_t</code>
+              </p>
+            </div>
+
+            <div style="background:rgba(255,255,255,0.02); border-left:3px solid var(--accent-emerald); padding:0.6rem 0.8rem; border-radius:0 var(--radius-sm) var(--radius-sm) 0; font-size:0.825rem;">
+              <strong style="color:#fff;">3. Autoregressive Ridge Regression with Lag Features:</strong>
+              <p style="color:var(--text-secondary); margin-top:0.2rem;">
+                Engineered features: $y_{t-1}, y_{t-2}, y_{t-3}$, Rolling 3-Yr Mean, Rolling 5-Yr Mean, and secular year index with $L_2$ regularization penalty ($\lambda=10.0$):<br>
+                <code>ŷ_t = w_0 + w_1·y_{t-1} + w_2·y_{t-2} + w_3·y_{t-3} + w_4·SMA_3 + w_5·SMA_5</code>
+              </p>
+            </div>
+
+            <div style="background:rgba(255,255,255,0.02); border-left:3px solid var(--accent-amber); padding:0.6rem 0.8rem; border-radius:0 var(--radius-sm) var(--radius-sm) 0; font-size:0.825rem;">
+              <strong style="color:#fff;">4. Ordinary Least Squares (OLS) Linear Trend:</strong>
+              <p style="color:var(--text-secondary); margin-top:0.2rem;">
+                Estimates the century-long climate secular slope:<br>
+                <code>ŷ_t = β_0 + β_1 × Year_t  (Slope = -0.82 mm / decade)</code>
+              </p>
+            </div>
+
+            <div style="background:rgba(255,255,255,0.02); border-left:3px solid var(--accent-blue); padding:0.6rem 0.8rem; border-radius:0 var(--radius-sm) var(--radius-sm) 0; font-size:0.825rem;">
+              <strong style="color:#fff;">5. 95% Confidence Interval Derivation:</strong>
+              <p style="color:var(--text-secondary); margin-top:0.2rem;">
+                Standard error of residuals ($SE$) derived from historical deviation:<br>
+                <code>95% CI = [ ŷ - 1.96 × SE,  ŷ + 1.96 × SE ]</code>
+              </p>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Model Evaluation & Backtesting Benchmark Table -->
+      <div class="dash-card">
+        <div class="dash-card-header">
+          <div class="dash-card-title-group">
+            <h3>🔬 Machine Learning Model Evaluation & Backtesting (Validation Period: 2006–2015)</h3>
+            <p>Trained on 105 historical years (1901–2005) and rigorously evaluated against 10 out-of-sample test years (2006–2015)</p>
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table class="data-table" id="table-model-metrics">
+            <thead>
+              <tr>
+                <th>Forecasting Model Architecture</th>
+                <th>RMSE (mm)</th>
+                <th>MAE (mm)</th>
+                <th>MAPE (%)</th>
+                <th>$R^2$ Score</th>
+                <th>Model Rationale & Mechanism</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Blended Ensemble Forecaster (Recommended)</strong></td>
+                <td><span style="color:var(--accent-emerald); font-weight:700;">114.7 mm</span></td>
+                <td>101.3 mm</td>
+                <td><span style="color:var(--accent-emerald); font-weight:700;">7.60%</span></td>
+                <td>-0.242</td>
+                <td>Optimal bias-variance trade-off (35% Holt's + 35% Ridge Lag + 30% SMA-5)</td>
+              </tr>
+              <tr>
+                <td><strong>Autoregressive Ridge Model (Lag-3 + Rolling)</strong></td>
+                <td><span style="color:var(--accent-emerald); font-weight:700;">112.0 mm</span></td>
+                <td>96.7 mm</td>
+                <td><span style="color:var(--accent-emerald); font-weight:700;">7.35%</span></td>
+                <td>-0.184</td>
+                <td>Multivariate L2 regularized regression on recent 1, 2, 3-year lags and rolling momentum</td>
+              </tr>
+              <tr>
+                <td><strong>Holt's Linear Exponential Smoothing</strong></td>
+                <td>116.0 mm</td>
+                <td>102.0 mm</td>
+                <td>7.57%</td>
+                <td>-0.270</td>
+                <td>Adaptive level and trend smoothing (α=0.25, β=0.08) capturing recent inertia</td>
+              </tr>
+              <tr>
+                <td><strong>Ordinary Least Squares (OLS) Linear Trend</strong></td>
+                <td>116.9 mm</td>
+                <td>95.8 mm</td>
+                <td>7.38%</td>
+                <td>-0.289</td>
+                <td>Parametric secular century-long slope evaluating long-term climate trajectory</td>
+              </tr>
+              <tr>
+                <td><strong>5-Year Rolling Moving Average (SMA)</strong></td>
+                <td>121.8 mm</td>
+                <td>106.0 mm</td>
+                <td>7.91%</td>
+                <td>-0.401</td>
+                <td>Non-parametric moving baseline filtering out high-frequency annual fluctuations</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Multi-Year Projection Horizon (2016–2025) -->
+      <div class="dash-card">
+        <div class="dash-card-header">
+          <div class="dash-card-title-group">
+            <h3>🔭 Forward 10-Year Forecast Horizon (2016–2025) with 95% Confidence Envelope</h3>
+            <p>Projections transitioning from short-term autoregressive momentum to long-term climate trend baseline</p>
+          </div>
+        </div>
+        <div class="chart-container tall">
+          <canvas id="chart-multiyear-projections"></canvas>
+        </div>
+      </div>
+
+      <!-- Test Set Validation Chart -->
+      <div class="dash-card">
+        <div class="dash-card-header">
+          <div class="dash-card-title-group">
+            <h3>📈 Out-of-Sample Backtesting Performance (Actual vs Predicted 2006–2015)</h3>
+            <p>Visual verification of model forecasts against ground truth test observations</p>
+          </div>
+        </div>
+        <div class="chart-container">
+          <canvas id="chart-backtesting-test"></canvas>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ============================================================== -->
+    <!-- TAB 7: GRANULAR DATA EXPLORER & CSV EXPORT -->
+    <!-- ============================================================== -->
+    <section class="tab-panel" id="panel-data-table" role="tabpanel">
+      
+      <div class="dash-card">
+        <div class="dash-card-header">
+          <div class="dash-card-title-group">
+            <h3>📋 Granular Rainfall Observations Database (4,116 Rows)</h3>
+            <p>Search, filter, inspect and download the verified India rainfall dataset</p>
+          </div>
+          <div class="dash-card-tools">
+            <input type="text" id="table-search-input" placeholder="Search subdivision or year..." class="custom-select" style="width:240px; padding:0.45rem 0.75rem;">
+            <button class="btn btn-primary" id="btn-export-filtered-csv">📥 Download Filtered CSV</button>
+          </div>
+        </div>
+
+        <div class="table-responsive" style="max-height: 600px; overflow-y: auto;">
+          <table class="data-table" id="table-granular-explorer">
+            <thead>
+              <tr>
+                <th>Subdivision</th>
+                <th>Year</th>
+                <th>Jan</th><th>Feb</th><th>Mar</th><th>Apr</th><th>May</th><th>Jun</th>
+                <th>Jul</th><th>Aug</th><th>Sep</th><th>Oct</th><th>Nov</th><th>Dec</th>
+                <th>Annual (mm)</th>
+                <th>Monsoon (mm)</th>
+                <th>YoY (mm)</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-granular-explorer">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:1rem; font-size:0.85rem; color:var(--text-secondary);">
+          <span id="label-table-count">Showing 1 to 50 of 4,116 records</span>
+          <div style="display:flex; gap:0.5rem;">
+            <button class="btn btn-outline" id="btn-table-prev">Previous</button>
+            <button class="btn btn-outline" id="btn-table-next">Next</button>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ============================================================== -->
+    <!-- TAB 8: INTERNSHIP PRESENTATION MODE (SLIDE DECK EMBEDDED) -->
+    <!-- ============================================================== -->
+    <section class="tab-panel" id="panel-internship-deck" role="tabpanel">
+      
+      <div class="dash-card" style="padding: 2rem;">
+        <div class="dash-card-header">
+          <div class="dash-card-title-group">
+            <h2>🎓 Internship Project Presentation: India Rainfall Analysis & Forecasting</h2>
+            <p>Curated presentation deck structured for internship review panels, mentors, and academic evaluations</p>
+          </div>
+          <button class="btn btn-presentation" id="btn-launch-fullscreen-deck">
+            <span>📺</span> Launch Fullscreen Slide Show
+          </button>
+        </div>
+
+        <!-- Embedded Slide View -->
+        <div class="slide-content" style="margin: 1.5rem auto; width:100%; border: 1px solid var(--border-medium);">
+          
+          <div class="slide-header">
+            <div>
+              <span class="slide-tag" id="embed-slide-tag">Slide 1 of 6 // Executive Introduction</span>
+              <h3 class="slide-title" id="embed-slide-title">1. Executive Overview & Problem Formulation</h3>
+            </div>
+            <span class="meta-pill highlight" id="embed-slide-num">1 / 6</span>
+          </div>
+
+          <div class="slide-body" id="embed-slide-body">
+            <!-- Dynamic Slide Content -->
+          </div>
+
+          <div class="pres-footer" style="margin-top: 2rem;">
+            <button class="btn btn-outline" id="btn-embed-slide-prev">‹ Previous Slide</button>
+            
+            <div class="slide-indicators" id="embed-slide-indicators">
+              <!-- Dot indicators -->
+            </div>
+
+            <button class="btn btn-primary" id="btn-embed-slide-next">Next Slide ›</button>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- App Footer -->
+    <footer class="app-footer">
+      <p>Bharat-Varsha Meteorological Intelligence Dashboard • Built for Data Science & Internship Assignment Presentation</p>
+      <p style="margin-top:4px;">Dataset Source: India Meteorological Department (IMD) Historical Climatological Records (1901–2015)</p>
+    </footer>
+
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- FULLSCREEN PRESENTATION MODAL -->
+  <!-- ============================================================== -->
+  <div class="presentation-modal" id="modal-presentation" role="dialog" aria-modal="true" aria-label="Internship Slide Presentation">
+    <div class="pres-header">
+      <div style="display:flex; align-items:center; gap:0.75rem;">
+        <span style="font-size:1.5rem;">🌧️</span>
+        <div>
+          <h2 style="font-size:1.15rem; font-weight:800; color:#fff;">BHARAT-VARSHA // Internship Presentation</h2>
+          <span style="font-size:0.75rem; color:var(--text-muted);">Use ← and → arrow keys to navigate slides • Press ESC to exit</span>
+        </div>
+      </div>
+      <button class="btn btn-outline" id="btn-close-presentation-modal">✕ Close Presentation (ESC)</button>
+    </div>
+
+    <div class="pres-stage">
+      <div class="slide-content">
+        <div class="slide-header">
+          <div>
+            <span class="slide-tag" id="modal-slide-tag">Slide 1 of 6</span>
+            <h3 class="slide-title" id="modal-slide-title">Title Here</h3>
+          </div>
+          <span class="meta-pill highlight" id="modal-slide-num">1 / 6</span>
+        </div>
+        <div class="slide-body" id="modal-slide-body">
+          <!-- Slide HTML -->
+        </div>
+      </div>
+    </div>
+
+    <div class="pres-footer">
+      <button class="btn btn-outline" id="btn-modal-prev">‹ Previous Slide</button>
+      <div class="slide-indicators" id="modal-slide-indicators"></div>
+      <button class="btn btn-primary" id="btn-modal-next">Next Slide ›</button>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <!-- 1. Embedded Data Fallback (Guarantees zero-CORS offline execution) -->
+  <script src="data/rainfall_data.js"></script>
+  <!-- 2. Chart Rendering Engine -->
+  <script src="js/charts.js"></script>
+  <!-- 3. Predictive Modeling & Scenarios -->
+  <script src="js/predictions.js"></script>
+  <!-- 4. Presentation Slide Deck Module -->
+  <script src="js/presentation.js"></script>
+  <!-- 5. Main Application Logic -->
+  <script src="js/app.js"></script>
+
+</body>
+</html>

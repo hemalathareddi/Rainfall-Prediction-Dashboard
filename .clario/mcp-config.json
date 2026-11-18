@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "clario": {
+      "command": "C:\\Users\\DELL\\.clario\\runtime\\node-win32-x64.exe",
+      "args": [
+        "C:\\Users\\DELL\\.clario\\mcp-server\\index.js"
+      ],
+      "env": {
+        "CLAR_WORKSPACE": "c:\\Rainfall-Prediction-Dashboard",
+        "CLAR_API_URL": "https://hub.clario.chat",
+        "CLAR_JWT": "eyJhbGciOiJSUzI1NiIsImtpZCI6IjkwNGIwZjkxYmU2ZWIwODY3ZGFiYmFhYjU4N2RmYzJlMzNmMDBhMjQiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vY2xhcmlvLWFpIiwiYXVkIjoiY2xhcmlvLWFpIiwiYXV0aF90aW1lIjoxNzkxMzkxNTA3LCJ1c2VyX2lkIjoiZEw1Ulo1R0lmOFZjTU0xUFJ5SndyMmpDWjlKMyIsInN1YiI6ImRMNVJaNUdJZjhWY01NMVBSeUp3cjJqQ1o5SjMiLCJpYXQiOjE3OTE0MDE2MDQsImV4cCI6MTc5MTQwNTIwNCwiZW1haWwiOiJoZW1hbGF0aGFyZWRkaTQ1MkBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiZmlyZWJhc2UiOnsiaWRlbnRpdGllcyI6eyJlbWFpbCI6WyJoZW1hbGF0aGFyZWRkaTQ1MkBnbWFpbC5jb20iXX0sInNpZ25faW5fcHJvdmlkZXIiOiJwYXNzd29yZCJ9fQ.AVfyH60hXvLwWIX2XNZN0fRU-c5kco-kDXsISJq3rYZFnQ_AFVNkO7QOsZro0qrCHPVyAM5lvry2pEsOWjrhl_U4sbDfJGaK702RsK63p2zgjl9ldEDgxxRL6UPrUDQy7zxEi7tiW033A-65dmM2tqnOngkb85jOVi3b6b5zIkOHONLwfg85vYotdfJIk7HFZWeSdSKsDpU0VzGsWenoeRA6DEdjQJqfumC9l0EcjBKm4nys-Mw8xSL-vRxiTxT_1kHUFyFAS0Tfi1JRy1wuCc-jMcwxCMri-apxwvZSj6bmQfmhXPN6M60IgA2msb22rINcfMljwLwxh3oZod-zuw",
+        "PATH": "C:\\Users\\DELL\\.clario\\runtime;C:\\WINDOWS\\system32;C:\\WINDOWS;C:\\WINDOWS\\System32\\Wbem;C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\;C:\\WINDOWS\\System32\\OpenSSH\\;C:\\Program Files\\Git\\cmd;C:\\Program Files\\nodejs\\;C:\\Program Files\\MySQL\\MySQL Shell 8.0\\bin\\;C:\\Users\\DELL\\.local\\bin;C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Launcher\\;C:\\Users\\DELL\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Users\\DELL\\AppData\\Local\\Programs\\Microsoft VS Code\\bin;C:\\Program Files\\JetBrains\\PyCharm 2026.1.2\\bin;C:\\Users\\DELL\\AppData\\Roaming\\npm;C:\\Users\\DELL\\AppData\\Local\\Programs\\Antigravity IDE\\bin"
+      }
+    }
+  }
+}
